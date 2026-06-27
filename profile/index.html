@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile — Hustlr</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563EB'/><text x='16' y='23' text-anchor='middle' font-size='20' font-weight='900' fill='white' font-family='Arial'>H</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <style>
+    body { padding-top: var(--header-height); background: var(--bg-secondary); }
+    .profile-banner { height: 180px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: var(--radius-lg); margin-bottom: -60px; }
+    .profile-avatar-wrap { position: relative; display: inline-block; }
+    .avatar-upload { position: absolute; bottom: 0; right: 0; width: 28px; height: 28px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; font-size: 0.75rem; border: 2px solid var(--bg-primary); }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="/" class="nav-logo"><div class="logo-icon">H</div> Hustlr</a>
+    <div class="nav-actions">
+      <button class="theme-toggle">🌙</button>
+      <a href="/buyer/dashboard.html" class="btn btn-ghost btn-sm" id="dashLink">← Dashboard</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container" style="padding-top:28px;padding-bottom:60px;max-width:900px;">
+
+  <!-- Loading -->
+  <div id="profileLoading">
+    <div class="skeleton" style="height:180px;border-radius:var(--radius-lg);margin-bottom:60px;"></div>
+    <div class="skeleton skeleton-title" style="width:200px;margin-bottom:8px;"></div>
+    <div class="skeleton skeleton-text" style="width:300px;"></div>
+  </div>
+
+  <!-- Profile Content -->
+  <div id="profileContent" style="display:none;" class="page-enter">
+
+    <!-- Banner -->
+    <div class="profile-banner"></div>
+
+    <!-- Profile Header Card -->
+    <div class="card mb-4" style="padding-top:24px;">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:20px;">
+        <div style="display:flex;align-items:flex-end;gap:16px;">
+          <div class="profile-avatar-wrap">
+            <div class="avatar avatar-xl" id="profileAvatar" style="background:linear-gradient(135deg,#2563EB,#7C3AED);border:4px solid var(--bg-primary);"></div>
+            <div class="avatar-upload" onclick="document.getElementById('avatarInput').click()" title="Change photo">📷</div>
+            <input type="file" id="avatarInput" style="display:none;" accept="image/*">
+          </div>
+          <div style="margin-bottom:6px;">
+            <h1 style="font-size:1.5rem;margin-bottom:4px;" id="profileName">Loading...</h1>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <span class="badge badge-primary" id="profileType">—</span>
+              <span id="profileVerified"></span>
+              <span style="font-size:0.8125rem;color:var(--text-muted);" id="profileSince"></span>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="toggleEdit()">✏️ Edit Profile</button>
+      </div>
+
+      <div id="profileBioDisplay" style="font-size:0.9375rem;color:var(--text-secondary);line-height:1.7;"></div>
+
+      <!-- Seller Stats -->
+      <div id="sellerStats" style="display:none;border-top:1px solid var(--border);margin-top:16px;padding-top:16px;">
+        <div style="display:flex;gap:24px;flex-wrap:wrap;">
+          <div style="text-align:center;">
+            <div style="font-size:1.375rem;font-weight:900;color:var(--primary);" id="s-rating">0.0</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">Avg Rating</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:1.375rem;font-weight:900;color:var(--success);" id="s-completed">0</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">Completed</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:1.375rem;font-weight:900;color:var(--secondary);" id="s-reviews">0</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">Reviews</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Form (hidden by default) -->
+    <div class="card mb-4" id="editForm" style="display:none;">
+      <h3 style="margin-bottom:16px;">Edit Profile</h3>
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input type="text" id="editName" class="form-control">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bio</label>
+        <textarea id="editBio" class="form-control" rows="4" placeholder="Tell others about yourself and your skills..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">University / Institution</label>
+        <input type="text" id="editUniversity" class="form-control" placeholder="e.g. University of Lagos">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone Number</label>
+        <div class="input-group">
+          <span class="input-prefix">🇳🇬 +234</span>
+          <input type="tel" id="editPhone" class="form-control" placeholder="8012345678">
+        </div>
+      </div>
+      <div class="flex gap-3">
+        <button class="btn btn-primary" id="saveProfileBtn">Save Changes</button>
+        <button class="btn btn-ghost" onclick="toggleEdit()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Skills (Sellers only) -->
+    <div class="card mb-4" id="skillsCard" style="display:none;">
+      <div class="flex items-center justify-between mb-4">
+        <h3>Skills & Expertise</h3>
+        <button class="btn btn-ghost btn-sm" onclick="toggleSkillEdit()">+ Add Skill</button>
+      </div>
+      <div id="skillsList" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+      <div id="skillEditArea" style="display:none;margin-top:12px;">
+        <div class="flex gap-2">
+          <input type="text" id="newSkillInput" class="form-control" placeholder="e.g. React, Photoshop, Figma">
+          <button class="btn btn-primary" onclick="addSkill()">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gigs (Sellers only) -->
+    <div class="card" id="gigsCard" style="display:none;">
+      <div class="flex items-center justify-between mb-4">
+        <h3>My Gigs</h3>
+        <a href="/seller/dashboard.html" class="btn btn-ghost btn-sm">Manage →</a>
+      </div>
+      <div id="profileGigsList"><div class="loader-page" style="min-height:80px;"><div class="loader loader-sm"></div></div></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast-container"></div>
+
+<script type="module">
+  import { initTheme, toggleTheme, showToast, formatDate, getInitials } from '/js/app.js';
+  import { auth } from '/js/firebase-config.js';
+  import { onAuthChange, getUserProfile } from '/js/auth.js';
+  import { getSellerGigs } from '/js/services.js';
+  import { doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+  import { db, storage } from '/js/firebase-config.js';
+  import { updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  initTheme();
+  document.querySelector('.theme-toggle')?.addEventListener('click', toggleTheme);
+
+  let currentUser = null;
+  let userProfile = null;
+  let isEditing = false;
+
+  onAuthChange(async (user) => {
+    if (!user) { window.location.href = '/auth/login.html'; return; }
+    currentUser = user;
+    userProfile = await getUserProfile(user.uid);
+
+    if (userProfile?.accountType === 'seller') {
+      document.getElementById('dashLink').href = '/seller/dashboard.html';
+    }
+
+    renderProfile();
+  });
+
+  function renderProfile() {
+    document.getElementById('profileLoading').style.display = 'none';
+    document.getElementById('profileContent').style.display = 'block';
+
+    const { fullName, accountType, verified, bio, createdAt, sellerProfile } = userProfile || {};
+
+    document.getElementById('profileAvatar').textContent = fullName?.[0] || '?';
+    document.getElementById('profileName').textContent = fullName || 'User';
+    document.getElementById('profileType').textContent = accountType === 'seller' ? '💼 Seller' : '🛍️ Buyer';
+    document.getElementById('profileVerified').innerHTML = verified ? '<span class="badge badge-success" style="font-size:0.7rem;">✅ Verified</span>' : '';
+    document.getElementById('profileSince').textContent = createdAt ? `Member since ${formatDate(createdAt)}` : '';
+    document.getElementById('profileBioDisplay').textContent = bio || 'No bio added yet. Edit your profile to add one.';
+
+    // Edit form values
+    document.getElementById('editName').value = fullName || '';
+    document.getElementById('editBio').value = bio || '';
+    document.getElementById('editUniversity').value = userProfile?.university || '';
+    document.getElementById('editPhone').value = userProfile?.phone || '';
+
+    if (accountType === 'seller') {
+      document.getElementById('sellerStats').style.display = 'flex';
+      document.getElementById('skillsCard').style.display = 'block';
+      document.getElementById('gigsCard').style.display = 'block';
+      document.getElementById('s-rating').textContent = (sellerProfile?.rating || 0).toFixed(1);
+      document.getElementById('s-completed').textContent = sellerProfile?.completedOrders || 0;
+      document.getElementById('s-reviews').textContent = sellerProfile?.reviewCount || 0;
+      renderSkills(sellerProfile?.skills || []);
+      loadSellerGigs();
+    }
+  }
+
+  function renderSkills(skills) {
+    document.getElementById('skillsList').innerHTML = skills.length
+      ? skills.map(s => `<span class="tag" style="cursor:default;">${s}</span>`).join('')
+      : '<span style="color:var(--text-muted);font-size:0.875rem;">No skills added yet</span>';
+  }
+
+  async function loadSellerGigs() {
+    const gigs = await getSellerGigs(currentUser.uid);
+    const container = document.getElementById('profileGigsList');
+    if (!gigs.length) {
+      container.innerHTML = `<div class="empty-state" style="padding:20px;"><div class="empty-icon">🎯</div><h3>No gigs yet</h3><a href="/seller/dashboard.html" class="btn btn-secondary btn-sm mt-2">Create a Gig</a></div>`;
+      return;
+    }
+    container.innerHTML = `<div style="display:flex;flex-direction:column;gap:10px;">
+      ${gigs.slice(0,3).map(g => `
+        <a href="/gig/index.html?id=${g.id}" style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--bg-secondary);border-radius:var(--radius);color:var(--text-primary);text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='var(--bg-secondary)'">
+          <div style="width:44px;height:44px;border-radius:var(--radius);background:rgba(37,99,235,0.1);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;">🎯</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${g.title}</div>
+            <div style="font-size:0.8125rem;color:var(--text-muted);">⭐ ${g.rating?.toFixed(1)||'0.0'} · ${g.orderCount||0} orders</div>
+          </div>
+          <span class="badge ${g.status==='active'?'badge-success':'badge-gray'}">${g.status}</span>
+        </a>
+      `).join('')}
+    </div>`;
+  }
+
+  window.toggleEdit = function() {
+    isEditing = !isEditing;
+    document.getElementById('editForm').style.display = isEditing ? 'block' : 'none';
+  };
+
+  window.toggleSkillEdit = function() {
+    const area = document.getElementById('skillEditArea');
+    area.style.display = area.style.display === 'none' ? 'block' : 'none';
+  };
+
+  window.addSkill = async function() {
+    const input = document.getElementById('newSkillInput');
+    const skill = input.value.trim();
+    if (!skill) return;
+    const skills = [...(userProfile?.sellerProfile?.skills || []), skill];
+    await updateDoc(doc(db, 'users', currentUser.uid), { 'sellerProfile.skills': skills });
+    userProfile.sellerProfile = { ...userProfile.sellerProfile, skills };
+    renderSkills(skills);
+    input.value = '';
+    document.getElementById('skillEditArea').style.display = 'none';
+    showToast('Skill added!', 'success');
+  };
+
+  // Save profile
+  document.getElementById('saveProfileBtn')?.addEventListener('click', async () => {
+    const btn = document.getElementById('saveProfileBtn');
+    btn.disabled = true; btn.textContent = 'Saving...';
+
+    const fullName = document.getElementById('editName').value.trim();
+    const bio = document.getElementById('editBio').value.trim();
+    const university = document.getElementById('editUniversity').value.trim();
+    const phone = document.getElementById('editPhone').value.trim();
+
+    try {
+      await updateDoc(doc(db, 'users', currentUser.uid), { fullName, bio, university, phone, updatedAt: serverTimestamp() });
+      await updateProfile(auth.currentUser, { displayName: fullName });
+      userProfile = { ...userProfile, fullName, bio, university, phone };
+      renderProfile();
+      toggleEdit();
+      showToast('Profile updated!', 'success');
+    } catch (e) {
+      showToast('Failed to update profile.', 'error');
+    }
+    btn.disabled = false; btn.textContent = 'Save Changes';
+  });
+
+  // Avatar upload
+  document.getElementById('avatarInput')?.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    showToast('Uploading photo...', 'info');
+    try {
+      const storageRef = ref(storage, `avatars/${currentUser.uid}`);
+      const snap = await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(snap.ref);
+      await updateDoc(doc(db, 'users', currentUser.uid), { avatar: url });
+      await updateProfile(auth.currentUser, { photoURL: url });
+      const avatarEl = document.getElementById('profileAvatar');
+      avatarEl.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+      showToast('Profile photo updated!', 'success');
+    } catch (e) {
+      showToast('Photo upload failed.', 'error');
+    }
+  });
+</script>
+</body>
+</html>

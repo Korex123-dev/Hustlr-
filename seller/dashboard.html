@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seller Dashboard — Hustlr</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%237C3AED'/><text x='16' y='23' text-anchor='middle' font-size='20' font-weight='900' fill='white' font-family='Arial'>H</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <style>
+    body { background: var(--bg-secondary); }
+    .order-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 18px 20px;
+      display: flex; align-items: center; gap: 16px; transition: all var(--transition);
+    }
+    .order-card:hover { box-shadow: var(--shadow-md); }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="/" class="nav-logo">
+      <div class="logo-icon" style="background: linear-gradient(135deg, #7C3AED, #2563EB);">H</div>
+      Hustlr
+    </a>
+    <div class="nav-actions">
+      <button class="theme-toggle">🌙</button>
+      <a href="/chat/index.html" class="btn btn-ghost btn-sm">💬 Messages</a>
+      <div class="dropdown">
+        <div data-dropdown="userMenu" style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:6px 10px;border-radius:var(--radius);border:1px solid var(--border);">
+          <div class="avatar" id="navAvatar" style="background:linear-gradient(135deg,#7C3AED,#2563EB);">S</div>
+          <span style="font-size:0.875rem;font-weight:600;" id="navName">Seller</span>
+          <span style="color:var(--text-muted);">▾</span>
+        </div>
+        <div class="dropdown-menu" id="userMenu">
+          <div class="dropdown-item" onclick="switchTab('gigs')">📋 My Gigs</div>
+          <div class="dropdown-item" onclick="window.location.href='/profile/index.html'">👤 My Profile</div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item danger" id="logoutBtn">🚪 Sign Out</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- LAYOUT -->
+<div class="dashboard-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Seller Dashboard</div>
+      <div class="sidebar-item active" onclick="switchTab('overview')">
+        <span class="item-icon">🏠</span> Overview
+      </div>
+      <div class="sidebar-item" onclick="switchTab('orders')">
+        <span class="item-icon">📦</span> Orders
+        <span class="item-badge" id="pendingBadge">0</span>
+      </div>
+      <div class="sidebar-item" onclick="switchTab('gigs')">
+        <span class="item-icon">🎯</span> My Gigs
+      </div>
+      <div class="sidebar-item" onclick="window.location.href='/chat/index.html'">
+        <span class="item-icon">💬</span> Messages
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Finance</div>
+      <div class="sidebar-item" onclick="switchTab('earnings')">
+        <span class="item-icon">💰</span> Earnings
+      </div>
+      <div class="sidebar-item" onclick="switchTab('withdrawals')">
+        <span class="item-icon">🏦</span> Withdrawals
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Account</div>
+      <div class="sidebar-item" onclick="window.location.href='/profile/index.html'">
+        <span class="item-icon">👤</span> Profile
+      </div>
+      <div class="sidebar-item danger" id="sidebarLogout" style="color:#ef4444;">
+        <span class="item-icon">🚪</span> Sign Out
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="dashboard-main">
+
+    <!-- OVERVIEW TAB -->
+    <div id="tab-overview" class="page-enter">
+      <div class="page-header" style="border:none;margin-bottom:20px;">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="page-title" id="welcomeMsg">Good morning 👋</div>
+            <div class="page-subtitle" id="verifiedBadge">Loading...</div>
+          </div>
+          <button class="btn btn-secondary" onclick="openCreateGigModal()">+ Create New Gig</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-4 gap-4 mb-6">
+        <div class="stat-card">
+          <div class="stat-icon purple">📦</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-active-orders">0</div>
+            <div class="stat-label">Active Orders</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">✅</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-completed">0</div>
+            <div class="stat-label">Completed</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon cyan">💰</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-earnings">₦0</div>
+            <div class="stat-label">Total Earnings</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange">⭐</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-rating">0.0</div>
+            <div class="stat-label">Avg Rating</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pending Orders Alert -->
+      <div id="pendingAlert" style="display:none;" class="card mb-4" style="border-left:4px solid var(--warning);background:rgba(245,158,11,0.07);">
+        <div class="flex items-center gap-3">
+          <span style="font-size:1.5rem;">⏳</span>
+          <div>
+            <div style="font-weight:700;">New Orders Waiting!</div>
+            <div style="font-size:0.875rem;color:var(--text-muted);" id="pendingAlertText">You have pending orders to accept.</div>
+          </div>
+          <button class="btn btn-warning btn-sm ml-auto" onclick="switchTab('orders')" style="margin-left:auto;background:var(--warning);color:white;">View Orders</button>
+        </div>
+      </div>
+
+      <!-- Recent Orders -->
+      <div class="card mb-4">
+        <div class="flex items-center justify-between mb-4">
+          <h3>Recent Orders</h3>
+          <button class="btn btn-ghost btn-sm" onclick="switchTab('orders')">View All →</button>
+        </div>
+        <div id="recentOrders"><div class="loader-page"><div class="loader"></div></div></div>
+      </div>
+
+      <!-- My Gigs Preview -->
+      <div class="card">
+        <div class="flex items-center justify-between mb-4">
+          <h3>My Active Gigs</h3>
+          <button class="btn btn-ghost btn-sm" onclick="switchTab('gigs')">Manage →</button>
+        </div>
+        <div id="gigsPreview"><div class="loader-page"><div class="loader"></div></div></div>
+      </div>
+    </div>
+
+    <!-- ORDERS TAB -->
+    <div id="tab-orders" style="display:none;">
+      <div class="page-header">
+        <div class="page-title">Orders</div>
+        <div class="page-subtitle">Manage all your client orders</div>
+      </div>
+
+      <div class="tabs mb-4">
+        <button class="tab-btn active" onclick="filterOrders('all', this)">All</button>
+        <button class="tab-btn" onclick="filterOrders('pending', this)">Pending</button>
+        <button class="tab-btn" onclick="filterOrders('accepted', this)">Accepted</button>
+        <button class="tab-btn" onclick="filterOrders('in_progress', this)">In Progress</button>
+        <button class="tab-btn" onclick="filterOrders('submitted', this)">Submitted</button>
+        <button class="tab-btn" onclick="filterOrders('completed', this)">Completed</button>
+      </div>
+
+      <div id="ordersListFull"><div class="loader-page"><div class="loader"></div></div></div>
+    </div>
+
+    <!-- GIGS TAB -->
+    <div id="tab-gigs" style="display:none;">
+      <div class="page-header">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="page-title">My Gigs</div>
+            <div class="page-subtitle">Manage your service listings</div>
+          </div>
+          <button class="btn btn-secondary" onclick="openCreateGigModal()">+ Create New Gig</button>
+        </div>
+      </div>
+      <div id="gigsList"><div class="loader-page"><div class="loader"></div></div></div>
+    </div>
+
+    <!-- EARNINGS TAB -->
+    <div id="tab-earnings" style="display:none;">
+      <div class="page-header">
+        <div class="page-title">Earnings</div>
+        <div class="page-subtitle">Your income from completed orders</div>
+      </div>
+
+      <div class="grid grid-3 gap-4 mb-6">
+        <div class="card" style="text-align:center;">
+          <div style="font-size:0.8125rem;color:var(--text-muted);margin-bottom:6px;">AVAILABLE BALANCE</div>
+          <div style="font-size:2rem;font-weight:900;color:var(--success);" id="earn-available">₦0</div>
+          <button class="btn btn-success btn-sm mt-3" onclick="openWithdrawalModal()">Withdraw</button>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div style="font-size:0.8125rem;color:var(--text-muted);margin-bottom:6px;">IN ESCROW</div>
+          <div style="font-size:2rem;font-weight:900;color:var(--warning);" id="earn-escrow">₦0</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:8px;">Released after buyer approval</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div style="font-size:0.8125rem;color:var(--text-muted);margin-bottom:6px;">TOTAL EARNED</div>
+          <div style="font-size:2rem;font-weight:900;color:var(--primary);" id="earn-total">₦0</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:8px;">All time earnings</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:16px;">Transaction History</h3>
+        <div id="earningsTable"><div class="loader-page"><div class="loader"></div></div></div>
+      </div>
+    </div>
+
+    <!-- WITHDRAWALS TAB -->
+    <div id="tab-withdrawals" style="display:none;">
+      <div class="page-header">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="page-title">Withdrawals</div>
+            <div class="page-subtitle">Request and track bank withdrawals</div>
+          </div>
+          <button class="btn btn-success" onclick="openWithdrawalModal()">+ Request Withdrawal</button>
+        </div>
+      </div>
+
+      <div class="card mb-4" style="background:rgba(37,99,235,0.05);border-color:rgba(37,99,235,0.2);">
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <span style="font-size:1.5rem;">🔒</span>
+          <div>
+            <div style="font-weight:700;margin-bottom:4px;">Your bank information is encrypted and private</div>
+            <p style="font-size:0.875rem;">Only you and authorized admins can see your banking details. Buyers can never access this information.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:16px;">Withdrawal History</h3>
+        <div id="withdrawalsList"><div class="loader-page"><div class="loader"></div></div></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- CREATE GIG MODAL -->
+<div class="modal-overlay" id="createGigModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3 class="modal-title">Create New Gig 🎯</h3>
+      <button class="modal-close" onclick="document.getElementById('createGigModal').classList.remove('open');document.body.style.overflow=''">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Gig Title *</label>
+        <input type="text" id="gigTitle" class="form-control" placeholder="e.g. I will design a professional logo for your brand">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tagline *</label>
+        <input type="text" id="gigTagline" class="form-control" placeholder="A short catchy phrase about your service">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category *</label>
+        <select id="gigCategory" class="form-control">
+          <option value="">Select category</option>
+          <option value="web-dev">Website Development</option>
+          <option value="graphic-design">Graphic Design</option>
+          <option value="ppt-design">PowerPoint Design</option>
+          <option value="cv-writing">CV Writing</option>
+          <option value="programming">Programming Assistance</option>
+          <option value="content">Content Writing</option>
+          <option value="video">Video Editing</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description *</label>
+        <textarea id="gigDescription" class="form-control" rows="4" placeholder="Describe your service in detail. What will you deliver? What's included?"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Keywords (comma-separated)</label>
+        <input type="text" id="gigKeywords" class="form-control" placeholder="e.g. logo design, branding, Photoshop">
+      </div>
+
+      <h4 style="margin-bottom:12px;">Pricing Packages *</h4>
+      <div id="packagesContainer">
+        <div class="package-row card card-sm mb-2" style="position:relative;">
+          <div class="grid grid-4 gap-3">
+            <div>
+              <label class="form-label">Package Name</label>
+              <select class="form-control pkg-name">
+                <option>Starter</option><option>Basic</option><option>Standard</option><option>Premium</option><option>Custom</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Price (₦)</label>
+              <input type="number" class="form-control pkg-price" placeholder="0" min="0">
+            </div>
+            <div>
+              <label class="form-label">Delivery (days)</label>
+              <input type="number" class="form-control pkg-days" placeholder="3" min="1" value="3">
+            </div>
+            <div>
+              <label class="form-label">Description</label>
+              <input type="text" class="form-control pkg-desc" placeholder="What's included?">
+            </div>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="addPackageRow()">+ Add Package</button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('createGigModal').classList.remove('open');document.body.style.overflow=''">Cancel</button>
+      <button class="btn btn-secondary" id="saveGigBtn">🚀 Publish Gig</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELIVER WORK MODAL -->
+<div class="modal-overlay" id="deliverModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Submit Delivery 📤</h3>
+      <button class="modal-close" onclick="document.getElementById('deliverModal').classList.remove('open');document.body.style.overflow=''">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Message to Buyer</label>
+        <textarea id="deliveryMsg" class="form-control" rows="4" placeholder="Describe what you've delivered, any notes, or instructions for the buyer..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Upload Files</label>
+        <div class="upload-zone" id="deliverUpload">
+          <div class="upload-icon">📁</div>
+          <div class="upload-title">Drop files here or click to upload</div>
+          <div class="upload-hint">PDF, ZIP, DOCX, PPTX, PNG, JPG, MP4 (max 25MB)</div>
+          <input type="file" id="deliverFile" style="display:none;" multiple accept=".pdf,.zip,.docx,.pptx,.png,.jpg,.jpeg,.mp4">
+        </div>
+        <div id="deliverFileList" style="margin-top:8px;"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('deliverModal').classList.remove('open');document.body.style.overflow=''">Cancel</button>
+      <button class="btn btn-secondary" id="submitDeliveryBtn">Submit Delivery</button>
+    </div>
+  </div>
+</div>
+
+<!-- WITHDRAWAL MODAL -->
+<div class="modal-overlay" id="withdrawalModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Request Withdrawal 🏦</h3>
+      <button class="modal-close" onclick="document.getElementById('withdrawalModal').classList.remove('open');document.body.style.overflow=''">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:var(--radius);padding:14px;margin-bottom:20px;">
+        <div style="font-weight:700;color:var(--success);">Available Balance: <span id="withdrawAvailable">₦0</span></div>
+        <div style="font-size:0.8125rem;color:var(--text-muted);margin-top:4px;">Bank information is fully encrypted and private.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Amount (₦) *</label>
+        <input type="number" id="withdrawAmount" class="form-control" placeholder="Enter amount to withdraw" min="500">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bank Name *</label>
+        <select id="withdrawBank" class="form-control">
+          <option value="">Select your bank</option>
+          <option>Access Bank</option><option>GTBank</option><option>First Bank</option>
+          <option>Zenith Bank</option><option>UBA</option><option>Fidelity Bank</option>
+          <option>Union Bank</option><option>Sterling Bank</option><option>Keystone Bank</option>
+          <option>Opay</option><option>Palmpay</option><option>Kuda Bank</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Account Number *</label>
+        <input type="text" id="withdrawAccNum" class="form-control" placeholder="10-digit account number" maxlength="10">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Account Name *</label>
+        <input type="text" id="withdrawAccName" class="form-control" placeholder="Account holder name">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('withdrawalModal').classList.remove('open');document.body.style.overflow=''">Cancel</button>
+      <button class="btn btn-success" id="submitWithdrawalBtn">Submit Request</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container"></div>
+
+<script type="module">
+  import { initTheme, toggleTheme, showToast, formatCurrency, formatDate, timeAgo, renderOrderStatus, initDropdowns } from '/js/app.js';
+  import { onAuthChange, getUserProfile, logout } from '/js/auth.js';
+  import { getSellerOrders, acceptOrder, startOrder, submitDelivery, getSellerEarnings, requestWithdrawal } from '/js/orders.js';
+  import { getSellerGigs, createGig } from '/js/services.js';
+  import { collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { db } from '/js/firebase-config.js';
+
+  initTheme();
+  initDropdowns();
+  document.querySelector('.theme-toggle')?.addEventListener('click', toggleTheme);
+
+  let currentUser = null;
+  let userProfile = null;
+  let allOrders = [];
+  let sellerGigs = [];
+  let sellerEarnings = { total: 0, transactions: [] };
+  let currentDeliveryOrderId = null;
+
+  onAuthChange(async (user) => {
+    if (!user) { window.location.href = '/auth/login.html'; return; }
+    currentUser = user;
+    userProfile = await getUserProfile(user.uid);
+
+    if (userProfile?.accountType === 'buyer') { window.location.href = '/buyer/dashboard.html'; return; }
+    if (userProfile?.accountType === 'admin') { window.location.href = '/admin/dashboard.html'; return; }
+
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+    const name = userProfile?.fullName?.split(' ')[0] || 'Seller';
+    document.getElementById('welcomeMsg').textContent = `${greeting}, ${name} 👋`;
+    document.getElementById('navName').textContent = name;
+    document.getElementById('navAvatar').textContent = userProfile?.fullName?.[0] || 'S';
+
+    const verified = userProfile?.verified;
+    document.getElementById('verifiedBadge').innerHTML = verified
+      ? '<span class="badge badge-success">✅ Verified Freelancer</span>'
+      : '<span class="badge badge-warning">⏳ Pending Verification — Admin will review your profile soon</span>';
+
+    await Promise.all([loadOrders(), loadGigs(), loadEarnings()]);
+  });
+
+  async function loadOrders() {
+    allOrders = await getSellerOrders(currentUser.uid);
+    const active = allOrders.filter(o => !['completed','refunded'].includes(o.status));
+    const completed = allOrders.filter(o => o.status === 'completed');
+    const pending = allOrders.filter(o => o.status === 'pending');
+
+    document.getElementById('stat-active-orders').textContent = active.length;
+    document.getElementById('stat-completed').textContent = completed.length;
+    document.getElementById('stat-rating').textContent = (userProfile?.sellerProfile?.rating || 0).toFixed(1);
+    document.getElementById('pendingBadge').textContent = pending.length;
+
+    if (pending.length) {
+      document.getElementById('pendingAlert').style.display = 'flex';
+      document.getElementById('pendingAlertText').textContent = `You have ${pending.length} new order${pending.length > 1 ? 's' : ''} waiting for acceptance.`;
+    }
+
+    renderRecentOrders();
+    renderOrdersList(allOrders);
+  }
+
+  async function loadGigs() {
+    sellerGigs = await getSellerGigs(currentUser.uid);
+    renderGigsPreview();
+    renderGigsList();
+  }
+
+  async function loadEarnings() {
+    sellerEarnings = await getSellerEarnings(currentUser.uid);
+    const available = userProfile?.sellerProfile?.earnings || 0;
+    const inEscrow = allOrders
+      .filter(o => o.escrowHeld && !['completed','refunded'].includes(o.status))
+      .reduce((s, o) => s + (o.sellerEarning || 0), 0);
+
+    document.getElementById('stat-earnings').textContent = formatCurrency(available);
+    document.getElementById('earn-available').textContent = formatCurrency(available);
+    document.getElementById('earn-escrow').textContent = formatCurrency(inEscrow);
+    document.getElementById('earn-total').textContent = formatCurrency(sellerEarnings.total);
+    document.getElementById('withdrawAvailable').textContent = formatCurrency(available);
+
+    renderEarningsTable();
+  }
+
+  function renderRecentOrders() {
+    const container = document.getElementById('recentOrders');
+    const recent = allOrders.slice(0, 5);
+    if (!recent.length) {
+      container.innerHTML = `<div class="empty-state"><div class="empty-icon">📦</div><h3>No orders yet</h3><p>Create a gig to start receiving orders</p></div>`;
+      return;
+    }
+    container.innerHTML = `<div style="display:flex;flex-direction:column;gap:10px;">
+      ${recent.map(o => `
+        <div class="order-card">
+          <div style="width:48px;height:48px;border-radius:var(--radius);background:rgba(124,58,237,0.1);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;">📦</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:700;font-size:0.9375rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${o.gigTitle || 'Order'}</div>
+            <div style="font-size:0.8125rem;color:var(--text-muted);">${o.packageName} · ${timeAgo(o.createdAt)}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+            ${renderOrderStatus(o.status)}
+            <span style="font-weight:700;color:var(--secondary);">${formatCurrency(o.sellerEarning || 0)}</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>`;
+  }
+
+  function renderOrdersList(orders) {
+    const container = document.getElementById('ordersListFull');
+    if (!orders.length) {
+      container.innerHTML = `<div class="empty-state"><div class="empty-icon">📦</div><h3>No orders found</h3></div>`;
+      return;
+    }
+    container.innerHTML = `<div style="display:flex;flex-direction:column;gap:10px;">
+      ${orders.map(o => `
+        <div class="order-card">
+          <div style="width:48px;height:48px;border-radius:var(--radius);background:rgba(124,58,237,0.1);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;">📦</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:700;font-size:0.9375rem;">${o.gigTitle || 'Order'}</div>
+            <div style="font-size:0.8125rem;color:var(--text-muted);">${o.packageName} · ${formatCurrency(o.sellerEarning || 0)} net · ${timeAgo(o.createdAt)}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;">
+            ${renderOrderStatus(o.status)}
+            ${o.status === 'pending' ? `<button class="btn btn-success btn-sm" onclick="handleAccept('${o.id}')">✅ Accept</button>` : ''}
+            ${o.status === 'accepted' ? `<button class="btn btn-secondary btn-sm" onclick="handleStart('${o.id}')">▶️ Start Work</button>` : ''}
+            ${o.status === 'in_progress' || o.status === 'revision' ? `<button class="btn btn-primary btn-sm" onclick="openDeliverModal('${o.id}')">📤 Submit Work</button>` : ''}
+            <button class="btn btn-ghost btn-sm" onclick="window.location.href='/chat/index.html'">💬 Chat</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>`;
+  }
+
+  function renderGigsPreview() {
+    const container = document.getElementById('gigsPreview');
+    if (!sellerGigs.length) {
+      container.innerHTML = `<div class="empty-state"><div class="empty-icon">🎯</div><h3>No gigs yet</h3><button class="btn btn-secondary mt-4" onclick="openCreateGigModal()">+ Create Your First Gig</button></div>`;
+      return;
+    }
+    container.innerHTML = `<div style="display:flex;flex-direction:column;gap:10px;">
+      ${sellerGigs.slice(0,3).map(g => `
+        <div class="order-card">
+          <div style="width:48px;height:48px;border-radius:var(--radius);background:rgba(124,58,237,0.1);display:flex;align-items:center;justify-content:center;font-size:1.25rem;">🎯</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${g.title}</div>
+            <div style="font-size:0.8125rem;color:var(--text-muted);">⭐ ${g.rating?.toFixed(1) || '0.0'} · ${g.orderCount || 0} orders</div>
+          </div>
+          <span class="badge ${g.status === 'active' ? 'badge-success' : 'badge-gray'}">${g.status}</span>
+        </div>
+      `).join('')}
+    </div>`;
+  }
+
+  function renderGigsList() {
+    const container = document.getElementById('gigsList');
+    if (!sellerGigs.length) {
+      container.innerHTML = `<div class="empty-state"><div class="empty-icon">🎯</div><h3>No gigs yet</h3><p>Create your first gig to start earning on Hustlr</p><button class="btn btn-secondary mt-4" onclick="openCreateGigModal()">+ Create Gig</button></div>`;
+      return;
+    }
+    container.innerHTML = `<div style="display:flex;flex-direction:column;gap:12px;">
+      ${sellerGigs.map(g => `
+        <div class="card">
+          <div class="flex items-start gap-4">
+            <div style="width:64px;height:64px;border-radius:var(--radius-md);background:linear-gradient(135deg,rgba(124,58,237,0.15),rgba(37,99,235,0.15));display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;">🎯</div>
+            <div style="flex:1;">
+              <div style="font-weight:700;font-size:1rem;margin-bottom:4px;">${g.title}</div>
+              <div style="font-size:0.8125rem;color:var(--text-muted);margin-bottom:8px;">${g.category} · ⭐ ${g.rating?.toFixed(1) || '0.0'} (${g.reviewCount || 0} reviews) · ${g.orderCount || 0} orders</div>
+              <div style="font-size:0.875rem;color:var(--text-secondary);">From ${formatCurrency(g.packages?.[0]?.price || 0)}</div>
+            </div>
+            <div class="flex gap-2 items-center">
+              <span class="badge ${g.status === 'active' ? 'badge-success' : 'badge-gray'}">${g.status}</span>
+              <a href="/gig/index.html?id=${g.id}" class="btn btn-ghost btn-sm">View</a>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>`;
+  }
+
+  function renderEarningsTable() {
+    const container = document.getElementById('earningsTable');
+    if (!sellerEarnings.transactions.length) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-icon">💰</div><h3>No transactions yet</h3></div>';
+      return;
+    }
+    container.innerHTML = `<table class="table">
+      <thead><tr><th>Order</th><th>Gross</th><th>Commission</th><th>Net</th><th>Date</th></tr></thead>
+      <tbody>
+        ${sellerEarnings.transactions.map(t => `
+          <tr>
+            <td>${t.orderId?.slice(0,8)}...</td>
+            <td>${formatCurrency(t.amount + t.commission)}</td>
+            <td style="color:var(--danger);">-${formatCurrency(t.commission)}</td>
+            <td style="color:var(--success);font-weight:700;">${formatCurrency(t.amount)}</td>
+            <td>${formatDate(t.createdAt)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+  }
+
+  window.filterOrders = function(status, btn) {
+    document.querySelectorAll('#tab-orders .tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filtered = status === 'all' ? allOrders : allOrders.filter(o => o.status === status);
+    renderOrdersList(filtered);
+  };
+
+  window.handleAccept = async function(id) {
+    const result = await acceptOrder(id);
+    if (result.success) await loadOrders();
+  };
+
+  window.handleStart = async function(id) {
+    const result = await startOrder(id);
+    if (result.success) await loadOrders();
+  };
+
+  window.openDeliverModal = function(orderId) {
+    currentDeliveryOrderId = orderId;
+    document.getElementById('deliverModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('deliveryMsg').value = '';
+    document.getElementById('deliverFileList').innerHTML = '';
+  };
+
+  document.getElementById('deliverUpload')?.addEventListener('click', () => document.getElementById('deliverFile').click());
+  document.getElementById('deliverFile')?.addEventListener('change', function() {
+    const files = Array.from(this.files);
+    document.getElementById('deliverFileList').innerHTML = files.map(f =>
+      `<div style="padding:6px 10px;background:var(--bg-secondary);border-radius:var(--radius-sm);font-size:0.8125rem;margin-bottom:4px;">📎 ${f.name}</div>`
+    ).join('');
+  });
+
+  document.getElementById('submitDeliveryBtn')?.addEventListener('click', async () => {
+    const msg = document.getElementById('deliveryMsg').value;
+    if (!msg.trim()) { showToast('Please add a message for the buyer', 'warning'); return; }
+    const btn = document.getElementById('submitDeliveryBtn');
+    btn.disabled = true; btn.textContent = 'Submitting...';
+    const result = await submitDelivery(currentDeliveryOrderId, { message: msg, files: [] });
+    if (result.success) {
+      document.getElementById('deliverModal').classList.remove('open');
+      document.body.style.overflow = '';
+      await loadOrders();
+    }
+    btn.disabled = false; btn.textContent = 'Submit Delivery';
+  });
+
+  window.openCreateGigModal = function() {
+    document.getElementById('createGigModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.addPackageRow = function() {
+    const container = document.getElementById('packagesContainer');
+    const row = document.createElement('div');
+    row.className = 'package-row card card-sm mb-2';
+    row.innerHTML = `
+      <div class="grid grid-4 gap-3">
+        <div><label class="form-label">Package Name</label><select class="form-control pkg-name"><option>Starter</option><option>Basic</option><option>Standard</option><option>Premium</option><option>Custom</option></select></div>
+        <div><label class="form-label">Price (₦)</label><input type="number" class="form-control pkg-price" placeholder="0" min="0"></div>
+        <div><label class="form-label">Delivery (days)</label><input type="number" class="form-control pkg-days" placeholder="3" min="1" value="3"></div>
+        <div><label class="form-label">Description</label><input type="text" class="form-control pkg-desc" placeholder="What's included?"></div>
+      </div>
+      <button onclick="this.closest('.package-row').remove()" style="position:absolute;top:8px;right:8px;background:none;border:none;color:var(--danger);cursor:pointer;font-size:1rem;">✕</button>
+    `;
+    row.style.position = 'relative';
+    container.appendChild(row);
+  };
+
+  document.getElementById('saveGigBtn')?.addEventListener('click', async () => {
+    const title = document.getElementById('gigTitle').value.trim();
+    const category = document.getElementById('gigCategory').value;
+    const description = document.getElementById('gigDescription').value.trim();
+
+    if (!title || !category || !description) { showToast('Please fill in all required fields', 'warning'); return; }
+
+    const packages = Array.from(document.querySelectorAll('.package-row')).map(row => ({
+      name: row.querySelector('.pkg-name').value,
+      price: parseInt(row.querySelector('.pkg-price').value) || 0,
+      deliveryDays: parseInt(row.querySelector('.pkg-days').value) || 3,
+      description: row.querySelector('.pkg-desc').value,
+    }));
+
+    const btn = document.getElementById('saveGigBtn');
+    btn.disabled = true; btn.textContent = 'Publishing...';
+
+    const result = await createGig({
+      title,
+      tagline: document.getElementById('gigTagline').value,
+      category,
+      description,
+      keywords: document.getElementById('gigKeywords').value.split(',').map(k => k.trim()).filter(Boolean),
+      packages,
+    }, currentUser.uid);
+
+    if (result.success) {
+      document.getElementById('createGigModal').classList.remove('open');
+      document.body.style.overflow = '';
+      await loadGigs();
+    }
+    btn.disabled = false; btn.textContent = '🚀 Publish Gig';
+  });
+
+  window.openWithdrawalModal = function() {
+    document.getElementById('withdrawalModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('withdrawAvailable').textContent = formatCurrency(userProfile?.sellerProfile?.earnings || 0);
+  };
+
+  document.getElementById('submitWithdrawalBtn')?.addEventListener('click', async () => {
+    const amount = parseInt(document.getElementById('withdrawAmount').value);
+    const bankName = document.getElementById('withdrawBank').value;
+    const accountNumber = document.getElementById('withdrawAccNum').value;
+    const accountName = document.getElementById('withdrawAccName').value;
+
+    if (!amount || !bankName || !accountNumber || !accountName) { showToast('Please fill in all fields', 'warning'); return; }
+    if (amount < 500) { showToast('Minimum withdrawal is ₦500', 'warning'); return; }
+    const available = userProfile?.sellerProfile?.earnings || 0;
+    if (amount > available) { showToast('Insufficient balance', 'error'); return; }
+
+    const btn = document.getElementById('submitWithdrawalBtn');
+    btn.disabled = true; btn.textContent = 'Submitting...';
+
+    const result = await requestWithdrawal(currentUser.uid, { amount, bankAccount: { bankName, accountNumber, accountName } });
+    if (result.success) {
+      document.getElementById('withdrawalModal').classList.remove('open');
+      document.body.style.overflow = '';
+      switchTab('withdrawals');
+    }
+    btn.disabled = false; btn.textContent = 'Submit Request';
+  });
+
+  window.switchTab = function(tab) {
+    ['overview','orders','gigs','earnings','withdrawals'].forEach(t => {
+      const el = document.getElementById(`tab-${t}`);
+      if (el) el.style.display = t === tab ? 'block' : 'none';
+    });
+    document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+  };
+
+  document.getElementById('logoutBtn')?.addEventListener('click', () => logout());
+  document.getElementById('sidebarLogout')?.addEventListener('click', () => logout());
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found — Hustlr</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563EB'/><text x='16' y='23' text-anchor='middle' font-size='20' font-weight='900' fill='white' font-family='Arial'>H</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/animations.css">
+</head>
+<body>
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:40px;">
+  <div style="font-size:6rem;margin-bottom:24px;" class="animate-float">🔍</div>
+  <h1 style="font-size:2.5rem;font-weight:900;margin-bottom:12px;">Page Not Found</h1>
+  <p style="font-size:1.0625rem;color:var(--text-muted);margin-bottom:32px;max-width:440px;">
+    The page you're looking for doesn't exist. It may have been moved or the link is incorrect.
+  </p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+    <a href="/" class="btn btn-primary btn-lg">🏠 Go Home</a>
+    <a href="/browse/index.html" class="btn btn-outline btn-lg">Browse Services</a>
+  </div>
+</div>
+<script>
+  const saved = localStorage.getItem('hustlr-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+</script>
+</body>
+</html>

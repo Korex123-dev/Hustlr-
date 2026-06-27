@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — Hustlr</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23EF4444'/><text x='16' y='23' text-anchor='middle' font-size='20' font-weight='900' fill='white' font-family='Arial'>A</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <style>
+    body { background: var(--bg-secondary); }
+    .admin-badge { background: rgba(239,68,68,0.12); color: var(--danger); font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: var(--radius-full); }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="/" class="nav-logo">
+      <div class="logo-icon" style="background:linear-gradient(135deg,#EF4444,#7C3AED);">A</div>
+      Hustlr <span class="admin-badge" style="margin-left:8px;">ADMIN</span>
+    </a>
+    <div class="nav-actions">
+      <button class="theme-toggle">🌙</button>
+      <div style="display:flex;align-items:center;gap:10px;padding:6px 12px;border-radius:var(--radius);border:1px solid var(--border);">
+        <div class="avatar avatar-sm" style="background:linear-gradient(135deg,#EF4444,#7C3AED);" id="navAvatar">A</div>
+        <span style="font-size:0.875rem;font-weight:700;" id="navName">Admin</span>
+      </div>
+      <button class="btn btn-danger btn-sm" id="logoutBtn">Sign Out</button>
+    </div>
+  </div>
+</nav>
+
+<div class="dashboard-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Admin Panel</div>
+      <div class="sidebar-item active" onclick="switchTab('overview')">
+        <span class="item-icon">📊</span> Overview
+      </div>
+      <div class="sidebar-item" onclick="switchTab('users')">
+        <span class="item-icon">👥</span> Users
+        <span class="item-badge" id="usersBadge">0</span>
+      </div>
+      <div class="sidebar-item" onclick="switchTab('gigs')">
+        <span class="item-icon">🎯</span> Gigs
+      </div>
+      <div class="sidebar-item" onclick="switchTab('orders')">
+        <span class="item-icon">📦</span> Orders
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Moderation</div>
+      <div class="sidebar-item" onclick="switchTab('disputes')">
+        <span class="item-icon">⚠️</span> Disputes
+        <span class="item-badge" id="disputesBadge" style="background:var(--danger);">0</span>
+      </div>
+      <div class="sidebar-item" onclick="switchTab('withdrawals')">
+        <span class="item-icon">🏦</span> Withdrawals
+        <span class="item-badge" id="withdrawalsBadge" style="background:var(--warning);color:#000;">0</span>
+      </div>
+      <div class="sidebar-item" onclick="switchTab('links')">
+        <span class="item-icon">🔗</span> Link Reviews
+        <span class="item-badge" id="linksBadge" style="background:var(--accent);">0</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="dashboard-main">
+
+    <!-- OVERVIEW -->
+    <div id="tab-overview" class="page-enter">
+      <div class="page-header" style="border:none;margin-bottom:20px;">
+        <div class="page-title">Admin Overview 📊</div>
+        <div class="page-subtitle">Platform health and key metrics at a glance</div>
+      </div>
+
+      <div class="grid grid-4 gap-4 mb-6">
+        <div class="stat-card">
+          <div class="stat-icon blue">👥</div>
+          <div class="stat-info">
+            <div class="stat-value" id="a-users">—</div>
+            <div class="stat-label">Total Users</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">📦</div>
+          <div class="stat-info">
+            <div class="stat-value" id="a-completed">—</div>
+            <div class="stat-label">Completed Orders</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple">💰</div>
+          <div class="stat-info">
+            <div class="stat-value" id="a-revenue">—</div>
+            <div class="stat-label">Platform Revenue</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange">🎯</div>
+          <div class="stat-info">
+            <div class="stat-value" id="a-gigs">—</div>
+            <div class="stat-label">Active Gigs</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-2 gap-4 mb-4">
+        <div class="stat-card">
+          <div class="stat-icon cyan">🛍️</div>
+          <div class="stat-info">
+            <div class="stat-value" id="a-buyers">—</div>
+            <div class="stat-label">Buyers</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">💼</div>
+          <div class="stat-info">
+            <div class="stat-value" id="a-sellers">—</div>
+            <div class="stat-label">Sellers</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Cards -->
+      <div class="grid grid-3 gap-4">
+        <div class="card card-clickable" onclick="switchTab('disputes')" style="border-left:4px solid var(--danger);">
+          <div style="font-size:1.5rem;margin-bottom:8px;">⚠️</div>
+          <h4 style="margin-bottom:4px;">Pending Disputes</h4>
+          <div style="font-size:1.5rem;font-weight:900;color:var(--danger);" id="quick-disputes">—</div>
+        </div>
+        <div class="card card-clickable" onclick="switchTab('withdrawals')" style="border-left:4px solid var(--warning);">
+          <div style="font-size:1.5rem;margin-bottom:8px;">🏦</div>
+          <h4 style="margin-bottom:4px;">Pending Withdrawals</h4>
+          <div style="font-size:1.5rem;font-weight:900;color:var(--warning);" id="quick-withdrawals">—</div>
+        </div>
+        <div class="card card-clickable" onclick="switchTab('links')" style="border-left:4px solid var(--accent);">
+          <div style="font-size:1.5rem;margin-bottom:8px;">🔗</div>
+          <h4 style="margin-bottom:4px;">Links for Review</h4>
+          <div style="font-size:1.5rem;font-weight:900;color:var(--accent);" id="quick-links">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div id="tab-users" style="display:none;">
+      <div class="page-header">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="page-title">Users Management</div>
+            <div class="page-subtitle">View and manage all registered users</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="flex gap-3 mb-4">
+          <div class="search-bar" style="flex:1;">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="userSearch" placeholder="Search by name or email...">
+          </div>
+          <select class="form-control" id="userTypeFilter" style="width:160px;" onchange="loadUsers()">
+            <option value="">All Types</option>
+            <option value="buyer">Buyers</option>
+            <option value="seller">Sellers</option>
+          </select>
+        </div>
+        <div id="usersTable"><div class="loader-page"><div class="loader"></div></div></div>
+      </div>
+    </div>
+
+    <!-- GIGS -->
+    <div id="tab-gigs" style="display:none;">
+      <div class="page-header">
+        <div class="page-title">Gig Moderation</div>
+        <div class="page-subtitle">Review and manage service listings</div>
+      </div>
+      <div class="card">
+        <div id="gigsTable"><div class="loader-page"><div class="loader"></div></div></div>
+      </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div id="tab-orders" style="display:none;">
+      <div class="page-header">
+        <div class="page-title">All Orders</div>
+        <div class="page-subtitle">Monitor all platform transactions</div>
+      </div>
+      <div class="card">
+        <div class="tabs mb-4">
+          <button class="tab-btn active" onclick="filterOrders('all',this)">All</button>
+          <button class="tab-btn" onclick="filterOrders('in_progress',this)">Active</button>
+          <button class="tab-btn" onclick="filterOrders('completed',this)">Completed</button>
+          <button class="tab-btn" onclick="filterOrders('disputed',this)">Disputed</button>
+        </div>
+        <div id="ordersTable"><div class="loader-page"><div class="loader"></div></div></div>
+      </div>
+    </div>
+
+    <!-- DISPUTES -->
+    <div id="tab-disputes" style="display:none;">
+      <div class="page-header">
+        <div class="page-title">⚠️ Dispute Resolution</div>
+        <div class="page-subtitle">Review and resolve buyer-seller disputes</div>
+      </div>
+      <div id="disputesList"><div class="loader-page"><div class="loader"></div></div></div>
+    </div>
+
+    <!-- WITHDRAWALS -->
+    <div id="tab-withdrawals" style="display:none;">
+      <div class="page-header">
+        <div class="page-title">🏦 Withdrawal Requests</div>
+        <div class="page-subtitle">Review and process seller payout requests</div>
+      </div>
+      <div class="card mb-4" style="background:rgba(239,68,68,0.05);border-color:rgba(239,68,68,0.2);">
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <span style="font-size:1.5rem;">🔐</span>
+          <div>
+            <div style="font-weight:700;">Seller Banking Information is Private</div>
+            <p style="font-size:0.875rem;margin-top:4px;">All bank account data is encrypted. Only process withdrawals through official channels. Buyers cannot access any of this information.</p>
+          </div>
+        </div>
+      </div>
+      <div id="withdrawalsList"><div class="loader-page"><div class="loader"></div></div></div>
+    </div>
+
+    <!-- LINK REVIEWS -->
+    <div id="tab-links" style="display:none;">
+      <div class="page-header">
+        <div class="page-title">🔗 Link Review Queue</div>
+        <div class="page-subtitle">Review and approve or reject submitted external links</div>
+      </div>
+      <div class="card mb-4" style="background:rgba(6,182,212,0.05);border-color:rgba(6,182,212,0.2);">
+        <p style="font-size:0.875rem;">External links are blocked by default to prevent scams and off-platform deals. Only approve safe, relevant links.</p>
+      </div>
+      <div id="linksList"><div class="loader-page"><div class="loader"></div></div></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- DISPUTE RESOLUTION MODAL -->
+<div class="modal-overlay" id="disputeModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">⚠️ Resolve Dispute</h3>
+      <button class="modal-close" onclick="document.getElementById('disputeModal').classList.remove('open');document.body.style.overflow=''">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="disputeDetails" class="mb-4"></div>
+      <div class="form-group">
+        <label class="form-label">Resolution Notes</label>
+        <textarea id="resolutionNotes" class="form-control" rows="3" placeholder="Describe the resolution..."></textarea>
+      </div>
+      <div class="grid grid-2 gap-3">
+        <button class="btn btn-success w-full" id="resolveSellerBtn">✅ Release to Seller</button>
+        <button class="btn btn-danger w-full" id="resolveBuyerBtn">💸 Refund Buyer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container"></div>
+
+<script type="module">
+  import { initTheme, toggleTheme, showToast, formatCurrency, formatDate, timeAgo, renderOrderStatus, initDropdowns } from '/js/app.js';
+  import { onAuthChange, getUserProfile, logout } from '/js/auth.js';
+  import {
+    verifyAdmin, getAllUsers, updateUserStatus, verifyFreelancer,
+    getAllGigs, updateGigStatus, getAllOrders, getDisputes, resolveDispute,
+    getPendingWithdrawals, approveWithdrawal, rejectWithdrawal,
+    getPendingLinks, reviewLink, getAnalytics
+  } from '/js/admin.js';
+
+  initTheme();
+  initDropdowns();
+  document.querySelector('.theme-toggle')?.addEventListener('click', toggleTheme);
+
+  let currentUser = null;
+  let allOrdersData = [];
+  let currentDisputeId = null;
+  let loadedTabs = new Set();
+
+  onAuthChange(async (user) => {
+    if (!user) { window.location.href = '/auth/login.html'; return; }
+    currentUser = user;
+    const isAdmin = await verifyAdmin(user.uid);
+    if (!isAdmin) return;
+
+    const profile = await getUserProfile(user.uid);
+    document.getElementById('navAvatar').textContent = profile?.fullName?.[0] || 'A';
+    document.getElementById('navName').textContent = profile?.fullName || 'Admin';
+
+    await loadAnalytics();
+  });
+
+  async function loadAnalytics() {
+    const data = await getAnalytics();
+    document.getElementById('a-users').textContent = data.totalUsers || 0;
+    document.getElementById('a-completed').textContent = data.completedOrders || 0;
+    document.getElementById('a-revenue').textContent = formatCurrency(data.totalRevenue || 0);
+    document.getElementById('a-gigs').textContent = data.activeGigs || 0;
+    document.getElementById('a-buyers').textContent = data.buyers || 0;
+    document.getElementById('a-sellers').textContent = data.sellers || 0;
+    document.getElementById('usersBadge').textContent = data.totalUsers || 0;
+
+    // Load counts for badges
+    const [disputes, withdrawals, links] = await Promise.all([
+      getDisputes(), getPendingWithdrawals(), getPendingLinks()
+    ]);
+
+    document.getElementById('disputesBadge').textContent = disputes.length;
+    document.getElementById('withdrawalsBadge').textContent = withdrawals.length;
+    document.getElementById('linksBadge').textContent = links.length;
+    document.getElementById('quick-disputes').textContent = disputes.length;
+    document.getElementById('quick-withdrawals').textContent = withdrawals.length;
+    document.getElementById('quick-links').textContent = links.length;
+  }
+
+  async function loadUsers() {
+    const container = document.getElementById('usersTable');
+    const type = document.getElementById('userTypeFilter')?.value;
+    const search = document.getElementById('userSearch')?.value;
+    const users = await getAllUsers({ type, search });
+
+    if (!users.length) { container.innerHTML = '<div class="empty-state"><div class="empty-icon">👥</div><h3>No users found</h3></div>'; return; }
+
+    container.innerHTML = `<table class="table">
+      <thead><tr><th>Name</th><th>Email</th><th>Type</th><th>Verified</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+      <tbody>
+        ${users.map(u => `
+          <tr>
+            <td><div style="display:flex;align-items:center;gap:8px;"><div class="avatar avatar-sm" style="background:linear-gradient(135deg,#2563EB,#7C3AED);">${u.fullName?.[0]||'?'}</div>${u.fullName||'—'}</div></td>
+            <td style="font-size:0.8125rem;">${u.email||'—'}</td>
+            <td><span class="badge ${u.accountType==='seller'?'badge-secondary':'badge-primary'}">${u.accountType||'—'}</span></td>
+            <td>${u.verified ? '✅' : '—'}</td>
+            <td><span class="badge ${u.status==='active'?'badge-success':'badge-danger'}">${u.status||'active'}</span></td>
+            <td style="font-size:0.8125rem;">${formatDate(u.createdAt)}</td>
+            <td>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                ${u.accountType==='seller'&&!u.verified ? `<button class="btn btn-success btn-sm" onclick="handleVerify('${u.id}')">✅ Verify</button>` : ''}
+                ${u.status==='active' ? `<button class="btn btn-danger btn-sm" onclick="handleSuspend('${u.id}')">🚫 Suspend</button>` : `<button class="btn btn-success btn-sm" onclick="handleActivate('${u.id}')">✅ Activate</button>`}
+              </div>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+  }
+
+  async function loadGigs() {
+    const container = document.getElementById('gigsTable');
+    const gigs = await getAllGigs();
+    if (!gigs.length) { container.innerHTML = '<div class="empty-state"><div class="empty-icon">🎯</div><h3>No gigs found</h3></div>'; return; }
+    container.innerHTML = `<table class="table">
+      <thead><tr><th>Title</th><th>Category</th><th>Rating</th><th>Orders</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        ${gigs.map(g => `
+          <tr>
+            <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;">${g.title}</td>
+            <td><span class="badge badge-primary">${g.category||'—'}</span></td>
+            <td>⭐ ${g.rating?.toFixed(1)||'0.0'} (${g.reviewCount||0})</td>
+            <td>${g.orderCount||0}</td>
+            <td><span class="badge ${g.status==='active'?'badge-success':'badge-gray'}">${g.status}</span></td>
+            <td>
+              <div style="display:flex;gap:6px;">
+                <a href="/gig/index.html?id=${g.id}" target="_blank" class="btn btn-ghost btn-sm">View</a>
+                ${g.status==='active' ? `<button class="btn btn-danger btn-sm" onclick="handleGigStatus('${g.id}','suspended')">Suspend</button>` : `<button class="btn btn-success btn-sm" onclick="handleGigStatus('${g.id}','active')">Activate</button>`}
+              </div>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+  }
+
+  async function loadOrders(status) {
+    const container = document.getElementById('ordersTable');
+    container.innerHTML = '<div class="loader-page"><div class="loader"></div></div>';
+    allOrdersData = await getAllOrders({ status: status === 'all' ? undefined : status });
+    renderOrdersTable(allOrdersData);
+  }
+
+  function renderOrdersTable(orders) {
+    const container = document.getElementById('ordersTable');
+    if (!orders.length) { container.innerHTML = '<div class="empty-state"><div class="empty-icon">📦</div><h3>No orders found</h3></div>'; return; }
+    container.innerHTML = `<table class="table">
+      <thead><tr><th>Gig</th><th>Package</th><th>Amount</th><th>Commission</th><th>Status</th><th>Date</th></tr></thead>
+      <tbody>
+        ${orders.map(o => `
+          <tr>
+            <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${o.gigTitle||'—'}</td>
+            <td>${o.packageName||'—'}</td>
+            <td>${formatCurrency(o.price||0)}</td>
+            <td style="color:var(--success);font-weight:700;">${formatCurrency(o.commission||0)}</td>
+            <td>${renderOrderStatus(o.status)}</td>
+            <td style="font-size:0.8125rem;">${formatDate(o.createdAt)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+  }
+
+  async function loadDisputes() {
+    const container = document.getElementById('disputesList');
+    const disputes = await getDisputes();
+    if (!disputes.length) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><h3>No active disputes</h3><p>Great! No disputes to resolve.</p></div>';
+      return;
+    }
+    container.innerHTML = disputes.map(d => `
+      <div class="card mb-3">
+        <div class="flex items-start justify-between">
+          <div>
+            <h4 style="margin-bottom:4px;">${d.gigTitle||'Order'}</h4>
+            <div style="font-size:0.875rem;color:var(--text-muted);margin-bottom:8px;">${formatDate(d.disputedAt)} · ${formatCurrency(d.price||0)}</div>
+            <div style="font-size:0.9rem;padding:10px;background:rgba(239,68,68,0.07);border-radius:var(--radius);border-left:3px solid var(--danger);">
+              <strong>Reason:</strong> ${d.disputeReason||'No reason provided'}
+            </div>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="openDisputeModal('${d.id}','${d.gigTitle}','${d.price}')">Resolve</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function loadWithdrawals() {
+    const container = document.getElementById('withdrawalsList');
+    const withdrawals = await getPendingWithdrawals();
+    if (!withdrawals.length) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-icon">🏦</div><h3>No pending withdrawals</h3></div>';
+      return;
+    }
+    container.innerHTML = withdrawals.map(w => `
+      <div class="card mb-3">
+        <div class="flex items-start justify-between">
+          <div>
+            <div style="font-weight:800;font-size:1.125rem;color:var(--success);margin-bottom:8px;">${formatCurrency(w.amount)}</div>
+            <div style="font-size:0.875rem;margin-bottom:4px;"><strong>${w.bankAccount?.bankName||'—'}</strong></div>
+            <div style="font-size:0.875rem;color:var(--text-muted);">${w.bankAccount?.accountName||'—'} · ${w.bankAccount?.accountNumber||'—'}</div>
+            <div style="font-size:0.8125rem;color:var(--text-muted);margin-top:4px;">${formatDate(w.requestedAt)}</div>
+          </div>
+          <div class="flex gap-2">
+            <button class="btn btn-success btn-sm" onclick="handleApproveWithdrawal('${w.id}')">✅ Approve</button>
+            <button class="btn btn-danger btn-sm" onclick="handleRejectWithdrawal('${w.id}')">❌ Reject</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function loadLinks() {
+    const container = document.getElementById('linksList');
+    const links = await getPendingLinks();
+    if (!links.length) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-icon">🔗</div><h3>No links pending review</h3></div>';
+      return;
+    }
+    container.innerHTML = links.map(l => `
+      <div class="card mb-3">
+        <div class="flex items-start justify-between">
+          <div>
+            <div style="font-weight:700;margin-bottom:6px;">🔗 Submitted Link</div>
+            <div style="font-family:monospace;font-size:0.875rem;background:var(--bg-secondary);padding:8px 12px;border-radius:var(--radius);word-break:break-all;margin-bottom:8px;">${l.url||'—'}</div>
+            <div style="font-size:0.8125rem;color:var(--text-muted);">Original message: "${l.originalMessage?.slice(0,100)||'—'}"</div>
+            <div style="font-size:0.8125rem;color:var(--text-muted);margin-top:4px;">${timeAgo(l.requestedAt)}</div>
+          </div>
+          <div class="flex gap-2" style="flex-shrink:0;margin-left:16px;">
+            <button class="btn btn-success btn-sm" onclick="handleLinkReview('${l.id}',true)">✅ Approve</button>
+            <button class="btn btn-danger btn-sm" onclick="handleLinkReview('${l.id}',false)">❌ Reject</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Action handlers
+  window.handleVerify = async (uid) => { await verifyFreelancer(uid); loadUsers(); };
+  window.handleSuspend = async (uid) => { if (confirm('Suspend this user?')) { await updateUserStatus(uid, 'suspended'); loadUsers(); } };
+  window.handleActivate = async (uid) => { await updateUserStatus(uid, 'active'); loadUsers(); };
+  window.handleGigStatus = async (id, status) => { await updateGigStatus(id, status); loadGigs(); };
+  window.handleApproveWithdrawal = async (id) => { if (confirm('Approve and process this withdrawal?')) { await approveWithdrawal(id); loadWithdrawals(); } };
+  window.handleRejectWithdrawal = async (id) => { const r = prompt('Reason for rejection:'); if (!r) return; await rejectWithdrawal(id, r); loadWithdrawals(); };
+  window.handleLinkReview = async (id, approved) => { await reviewLink(id, approved); loadLinks(); };
+  window.filterOrders = (status, btn) => {
+    document.querySelectorAll('#tab-orders .tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    loadOrders(status);
+  };
+
+  window.openDisputeModal = function(id, title, price) {
+    currentDisputeId = id;
+    document.getElementById('disputeDetails').innerHTML = `<div class="card card-sm" style="background:var(--bg-secondary);margin-bottom:16px;"><strong>${title}</strong><div style="color:var(--primary);font-weight:700;margin-top:4px;">${formatCurrency(parseInt(price)||0)}</div></div>`;
+    document.getElementById('disputeModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    document.getElementById('resolveSellerBtn').onclick = async () => {
+      const notes = document.getElementById('resolutionNotes').value;
+      await resolveDispute(currentDisputeId, { resolution: notes, refundBuyer: false });
+      document.getElementById('disputeModal').classList.remove('open');
+      document.body.style.overflow = '';
+      loadDisputes();
+    };
+    document.getElementById('resolveBuyerBtn').onclick = async () => {
+      const notes = document.getElementById('resolutionNotes').value;
+      await resolveDispute(currentDisputeId, { resolution: notes, refundBuyer: true });
+      document.getElementById('disputeModal').classList.remove('open');
+      document.body.style.overflow = '';
+      loadDisputes();
+    };
+  };
+
+  window.switchTab = function(tab) {
+    ['overview','users','gigs','orders','disputes','withdrawals','links'].forEach(t => {
+      const el = document.getElementById(`tab-${t}`);
+      if (el) el.style.display = t === tab ? 'block' : 'none';
+    });
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+
+    if (!loadedTabs.has(tab)) {
+      loadedTabs.add(tab);
+      if (tab === 'users') { loadUsers(); document.getElementById('userSearch')?.addEventListener('input', () => loadUsers()); }
+      if (tab === 'gigs') loadGigs();
+      if (tab === 'orders') loadOrders('all');
+      if (tab === 'disputes') loadDisputes();
+      if (tab === 'withdrawals') loadWithdrawals();
+      if (tab === 'links') loadLinks();
+    }
+  };
+
+  document.getElementById('logoutBtn')?.addEventListener('click', () => logout());
+</script>
+</body>
+</html>

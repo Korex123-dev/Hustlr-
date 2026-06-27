@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Tracking — Hustlr</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563EB'/><text x='16' y='23' text-anchor='middle' font-size='20' font-weight='900' fill='white' font-family='Arial'>H</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <style>
+    body { padding-top: var(--header-height); background: var(--bg-secondary); }
+    .timeline { position: relative; }
+    .timeline::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+    .timeline-item { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 24px; position: relative; }
+    .timeline-dot { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; z-index: 1; font-size: 1.1rem; }
+    .timeline-dot.done { background: var(--success); }
+    .timeline-dot.current { background: var(--primary); animation: pulse 2s infinite; }
+    .timeline-dot.pending { background: var(--bg-tertiary); border: 2px solid var(--border); }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="/" class="nav-logo"><div class="logo-icon">H</div> Hustlr</a>
+    <div class="nav-actions">
+      <button class="theme-toggle">🌙</button>
+      <a href="/buyer/dashboard.html" class="btn btn-ghost btn-sm" id="dashLink">← Dashboard</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container" style="padding-top:28px;padding-bottom:60px;max-width:800px;">
+
+  <!-- Loading -->
+  <div id="orderLoading">
+    <div class="skeleton skeleton-title mb-3"></div>
+    <div class="skeleton" style="height:300px;border-radius:var(--radius-lg);"></div>
+  </div>
+
+  <!-- Order Content -->
+  <div id="orderContent" style="display:none;" class="page-enter">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <h1 id="orderTitle" style="font-size:1.5rem;font-weight:800;margin-bottom:6px;">Order</h1>
+        <div style="font-size:0.875rem;color:var(--text-muted);">Order ID: <span id="orderId" style="font-family:monospace;"></span></div>
+      </div>
+      <div id="orderStatusBadge"></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;">
+
+      <!-- LEFT -->
+      <div>
+        <!-- Order Timeline -->
+        <div class="card mb-4">
+          <h3 style="margin-bottom:20px;">Order Progress</h3>
+          <div class="timeline" id="timeline"></div>
+        </div>
+
+        <!-- Requirements -->
+        <div class="card mb-4" id="requirementsCard" style="display:none;">
+          <h3 style="margin-bottom:12px;">Your Requirements</h3>
+          <div id="requirementsText" style="font-size:0.9375rem;line-height:1.7;color:var(--text-secondary);white-space:pre-wrap;"></div>
+        </div>
+
+        <!-- Delivery (if submitted) -->
+        <div class="card mb-4" id="deliveryCard" style="display:none;">
+          <h3 style="margin-bottom:12px;">📦 Work Delivered</h3>
+          <div id="deliveryMessage" style="font-size:0.9375rem;line-height:1.7;color:var(--text-secondary);margin-bottom:16px;"></div>
+          <div id="deliveryFiles"></div>
+
+          <div class="flex gap-3 mt-4" id="deliveryActions"></div>
+        </div>
+
+        <!-- Buyer Files -->
+        <div class="card" id="buyerFilesCard">
+          <h3 style="margin-bottom:12px;">📎 Attached Files</h3>
+          <div id="buyerFiles" style="margin-bottom:12px;"></div>
+          <div class="upload-zone" id="uploadZone" style="padding:20px;">
+            <div class="upload-icon" style="font-size:1.5rem;">📎</div>
+            <div class="upload-title" style="font-size:0.875rem;">Upload additional files</div>
+            <input type="file" id="uploadInput" style="display:none;" multiple>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div>
+        <!-- Order Summary Card -->
+        <div class="card mb-4">
+          <h4 style="margin-bottom:14px;">Order Summary</h4>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div class="flex justify-between">
+              <span style="font-size:0.875rem;color:var(--text-muted);">Package</span>
+              <span style="font-weight:600;" id="sumPackage">—</span>
+            </div>
+            <div class="flex justify-between">
+              <span style="font-size:0.875rem;color:var(--text-muted);">Price Paid</span>
+              <span style="font-weight:700;color:var(--primary);" id="sumPrice">—</span>
+            </div>
+            <div class="flex justify-between">
+              <span style="font-size:0.875rem;color:var(--text-muted);">Delivery Days</span>
+              <span style="font-weight:600;" id="sumDelivery">—</span>
+            </div>
+            <div class="divider"></div>
+            <div class="flex justify-between">
+              <span style="font-size:0.875rem;color:var(--text-muted);">Escrow Status</span>
+              <span id="sumEscrow" style="font-weight:700;">—</span>
+            </div>
+            <div class="flex justify-between">
+              <span style="font-size:0.875rem;color:var(--text-muted);">Placed On</span>
+              <span style="font-size:0.875rem;" id="sumDate">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div id="actionButtons" style="display:flex;flex-direction:column;gap:10px;"></div>
+
+        <!-- Chat Button -->
+        <div class="card mt-4">
+          <h4 style="margin-bottom:10px;">Need Help?</h4>
+          <a href="/chat/index.html" class="btn btn-ghost btn-full">💬 Message Seller</a>
+          <button class="btn btn-danger btn-sm btn-full mt-2" id="disputeOrderBtn" style="display:none;">⚠️ Open Dispute</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Not Found -->
+  <div id="orderNotFound" style="display:none;">
+    <div class="empty-state" style="padding:80px 20px;">
+      <div class="empty-icon">📦</div>
+      <h3>Order not found</h3>
+      <a href="/buyer/dashboard.html" class="btn btn-primary mt-4">← Back to Dashboard</a>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast-container"></div>
+
+<script type="module">
+  import { initTheme, toggleTheme, showToast, formatCurrency, formatDate, renderOrderStatus } from '/js/app.js';
+  import { onAuthChange, getUserProfile } from '/js/auth.js';
+  import { getOrder, approveDelivery, requestRevision, disputeOrder } from '/js/orders.js';
+
+  initTheme();
+  document.querySelector('.theme-toggle')?.addEventListener('click', toggleTheme);
+
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get('id');
+
+  let currentUser = null;
+  let order = null;
+
+  onAuthChange(async (user) => {
+    if (!user) { window.location.href = '/auth/login.html'; return; }
+    currentUser = user;
+    const profile = await getUserProfile(user.uid);
+    if (profile?.accountType === 'seller') {
+      document.getElementById('dashLink').href = '/seller/dashboard.html';
+      document.getElementById('dashLink').textContent = '← Seller Dashboard';
+    }
+    loadOrder();
+  });
+
+  async function loadOrder() {
+    if (!orderId) { showNotFound(); return; }
+    order = await getOrder(orderId);
+    if (!order) { showNotFound(); return; }
+
+    // Verify access
+    if (order.buyerId !== currentUser?.uid && order.sellerId !== currentUser?.uid) {
+      showNotFound(); return;
+    }
+
+    document.getElementById('orderLoading').style.display = 'none';
+    document.getElementById('orderContent').style.display = 'block';
+
+    // Fill content
+    document.getElementById('orderTitle').textContent = order.gigTitle || 'Order';
+    document.getElementById('orderId').textContent = order.id;
+    document.getElementById('orderStatusBadge').innerHTML = renderOrderStatus(order.status);
+    document.getElementById('sumPackage').textContent = order.packageName || '—';
+    document.getElementById('sumPrice').textContent = formatCurrency(order.price);
+    document.getElementById('sumDelivery').textContent = `${order.deliveryDays || 3} days`;
+    document.getElementById('sumEscrow').innerHTML = order.escrowHeld
+      ? '<span style="color:var(--warning);">🔒 Held</span>'
+      : '<span style="color:var(--success);">✅ Released</span>';
+    document.getElementById('sumDate').textContent = formatDate(order.createdAt);
+
+    if (order.requirements) {
+      document.getElementById('requirementsCard').style.display = 'block';
+      document.getElementById('requirementsText').textContent = order.requirements;
+    }
+
+    if (order.status === 'submitted' || order.status === 'completed') {
+      document.getElementById('deliveryCard').style.display = 'block';
+      document.getElementById('deliveryMessage').textContent = order.deliveryMessage || '';
+      if (order.deliveryFiles?.length) {
+        document.getElementById('deliveryFiles').innerHTML = order.deliveryFiles.map(f =>
+          `<a href="${f.url}" download="${f.name}" class="flex items-center gap-2" style="padding:8px;background:var(--bg-secondary);border-radius:var(--radius);color:var(--text-primary);text-decoration:none;margin-bottom:6px;">📎 ${f.name}</a>`
+        ).join('');
+      }
+
+      if (order.status === 'submitted' && order.buyerId === currentUser?.uid) {
+        document.getElementById('deliveryActions').innerHTML = `
+          <button class="btn btn-success flex-1" onclick="handleApprove()">✅ Approve & Release Payment</button>
+          <button class="btn btn-outline flex-1" onclick="handleRevision()">🔄 Request Revision</button>
+        `;
+      }
+    }
+
+    // Buyer files
+    const buyerFiles = order.files?.buyer || [];
+    if (buyerFiles.length) {
+      document.getElementById('buyerFiles').innerHTML = buyerFiles.map(f =>
+        `<a href="${f.url}" download="${f.name}" style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg-secondary);border-radius:var(--radius-sm);margin-bottom:6px;color:var(--text-primary);text-decoration:none;font-size:0.875rem;">📎 ${f.name}</a>`
+      ).join('');
+    }
+
+    // Timeline
+    renderTimeline(order.status);
+
+    // Dispute button
+    if (['submitted','in_progress','accepted'].includes(order.status) && order.buyerId === currentUser?.uid) {
+      document.getElementById('disputeOrderBtn').style.display = 'block';
+      document.getElementById('disputeOrderBtn').onclick = handleDispute;
+    }
+
+    // Upload zone
+    document.getElementById('uploadZone').addEventListener('click', () => document.getElementById('uploadInput').click());
+  }
+
+  function renderTimeline(status) {
+    const steps = [
+      { key: 'pending', icon: '🛍️', label: 'Order Placed', desc: 'Order submitted and payment in escrow' },
+      { key: 'accepted', icon: '✅', label: 'Order Accepted', desc: 'Seller accepted and started working' },
+      { key: 'in_progress', icon: '⚙️', label: 'In Progress', desc: 'Seller is working on your order' },
+      { key: 'submitted', icon: '📦', label: 'Work Submitted', desc: 'Seller delivered the work for review' },
+      { key: 'completed', icon: '🎉', label: 'Completed', desc: 'Order completed and payment released' },
+    ];
+
+    const statusOrder = ['pending','accepted','in_progress','submitted','completed'];
+    const currentIndex = statusOrder.indexOf(status);
+
+    const specialStatuses = { disputed: '⚠️ Dispute Opened', revision: '🔄 Revision Requested', refunded: '💸 Refunded' };
+
+    let html = '';
+    steps.forEach((step, i) => {
+      const isDone = i < currentIndex;
+      const isCurrent = i === currentIndex || (status === 'submitted' && i === 3);
+      html += `
+        <div class="timeline-item">
+          <div class="timeline-dot ${isDone ? 'done' : isCurrent ? 'current' : 'pending'}" style="color:white;">
+            ${isDone ? '✓' : step.icon}
+          </div>
+          <div style="padding-top:8px;">
+            <div style="font-weight:700;margin-bottom:2px;${isCurrent ? 'color:var(--primary);' : isDone ? '' : 'color:var(--text-muted);'}">${step.label}</div>
+            <div style="font-size:0.8125rem;color:var(--text-muted);">${step.desc}</div>
+          </div>
+        </div>
+      `;
+    });
+
+    if (specialStatuses[status]) {
+      html += `<div class="timeline-item">
+        <div class="timeline-dot current" style="background:var(--warning);color:white;">⚠️</div>
+        <div style="padding-top:8px;"><div style="font-weight:700;color:var(--warning);">${specialStatuses[status]}</div></div>
+      </div>`;
+    }
+
+    document.getElementById('timeline').innerHTML = html;
+  }
+
+  window.handleApprove = async function() {
+    if (!confirm('Approve this delivery? This will release payment to the seller.')) return;
+    const result = await approveDelivery(orderId);
+    if (result.success) setTimeout(() => window.location.reload(), 1500);
+  };
+
+  window.handleRevision = async function() {
+    const reason = prompt('What changes do you need?');
+    if (!reason) return;
+    const result = await requestRevision(orderId, reason);
+    if (result.success) setTimeout(() => window.location.reload(), 1500);
+  };
+
+  window.handleDispute = async function() {
+    const reason = prompt('Describe the issue with this order:');
+    if (!reason) return;
+    const result = await disputeOrder(orderId, reason);
+    if (result.success) setTimeout(() => window.location.reload(), 1500);
+  };
+
+  function showNotFound() {
+    document.getElementById('orderLoading').style.display = 'none';
+    document.getElementById('orderNotFound').style.display = 'block';
+  }
+</script>
+</body>
+</html>

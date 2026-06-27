@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Messages — Hustlr</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563EB'/><text x='16' y='23' text-anchor='middle' font-size='20' font-weight='900' fill='white' font-family='Arial'>H</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <style>
+    body { padding-top: var(--header-height); overflow: hidden; }
+    .chat-layout { height: calc(100vh - var(--header-height)); }
+    .chat-list { background: var(--bg-primary); border-right: 1px solid var(--border); overflow-y: auto; width: 320px; flex-shrink: 0; display: flex; flex-direction: column; }
+    .chat-list-header { padding: 16px; border-bottom: 1px solid var(--border); }
+    .chat-list-header h3 { font-size: 1.0625rem; font-weight: 800; }
+    .chat-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding: 40px 20px; text-align: center; color: var(--text-muted); }
+    .chat-empty .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+    .chat-window-empty { flex: 1; display: flex; align-items: center; justify-content: center; background: var(--bg-secondary); text-align: center; color: var(--text-muted); }
+    .chat-window-empty .icon { font-size: 4rem; margin-bottom: 16px; }
+    .emoji-btn { font-size: 1.2rem; padding: 6px; background: none; border: none; cursor: pointer; border-radius: var(--radius-sm); transition: background var(--transition); }
+    .emoji-btn:hover { background: var(--bg-hover); }
+    @media (max-width: 768px) {
+      .chat-list { width: 100%; position: absolute; top: var(--header-height); bottom: 0; left: 0; z-index: 50; background: var(--bg-primary); }
+      .chat-list.hidden { display: none; }
+      .chat-window { position: absolute; top: var(--header-height); bottom: 0; left: 0; right: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="/" class="nav-logo"><div class="logo-icon">H</div> Hustlr</a>
+    <div class="nav-actions">
+      <button class="theme-toggle">🌙</button>
+      <div class="dropdown">
+        <div data-dropdown="userMenu" style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:6px 10px;border-radius:var(--radius);border:1px solid var(--border);">
+          <div class="avatar avatar-sm" id="navAvatar">U</div>
+          <span style="font-size:0.875rem;font-weight:600;" id="navName">User</span>
+          <span style="color:var(--text-muted);">▾</span>
+        </div>
+        <div class="dropdown-menu" id="userMenu">
+          <div class="dropdown-item" id="dashboardLink">🏠 Dashboard</div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item danger" id="logoutBtn">🚪 Sign Out</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- CHAT LAYOUT -->
+<div class="chat-layout flex">
+
+  <!-- CONVERSATION LIST -->
+  <div class="chat-list" id="chatList">
+    <div class="chat-list-header">
+      <h3>Messages 💬</h3>
+      <div class="search-bar mt-3">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchConv" placeholder="Search conversations...">
+      </div>
+    </div>
+
+    <div id="convList" style="flex:1;overflow-y:auto;">
+      <div class="loader-page" style="min-height:120px;"><div class="loader"></div></div>
+    </div>
+  </div>
+
+  <!-- CHAT WINDOW -->
+  <div id="chatWindowArea" style="flex:1;display:flex;">
+    <div class="chat-window-empty" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+      <div class="icon">💬</div>
+      <h3 style="font-size:1.125rem;font-weight:700;margin-bottom:8px;">Your Messages</h3>
+      <p style="font-size:0.9rem;max-width:280px;">Select a conversation or start chatting with a freelancer.</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast-container"></div>
+
+<script type="module">
+  import { initTheme, toggleTheme, showToast, timeAgo, getInitials, formatDate, initDropdowns, sanitizeMessage, containsLink } from '/js/app.js';
+  import { onAuthChange, getUserProfile, logout } from '/js/auth.js';
+  import { listenToConversations, listenToMessages, sendMessage, markAsRead, uploadChatFile, getOrCreateConversation, renderMessage } from '/js/chat.js';
+  import { getDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { db } from '/js/firebase-config.js';
+
+  initTheme();
+  initDropdowns();
+  document.querySelector('.theme-toggle')?.addEventListener('click', toggleTheme);
+
+  let currentUser = null;
+  let currentConvId = null;
+  let conversations = [];
+  let unsubMessages = null;
+  let unsubConversations = null;
+  let userProfiles = {};
+  const params = new URLSearchParams(window.location.search);
+  const targetConvId = params.get('conv');
+
+  onAuthChange(async (user) => {
+    if (!user) { window.location.href = '/auth/login.html'; return; }
+    currentUser = user;
+    const profile = await getUserProfile(user.uid);
+    document.getElementById('navAvatar').textContent = profile?.fullName?.[0] || 'U';
+    document.getElementById('navName').textContent = profile?.fullName?.split(' ')[0] || 'User';
+    const dashUrl = profile?.accountType === 'seller' ? '/seller/dashboard.html' : '/buyer/dashboard.html';
+    document.getElementById('dashboardLink').onclick = () => window.location.href = dashUrl;
+
+    loadConversations();
+  });
+
+  function loadConversations() {
+    if (unsubConversations) unsubConversations();
+    unsubConversations = listenToConversations(currentUser.uid, async (convs) => {
+      conversations = convs;
+      await renderConversations(convs);
+
+      // Auto-open conversation from URL
+      if (targetConvId && !currentConvId) {
+        const conv = convs.find(c => c.id === targetConvId);
+        if (conv) openConversation(conv);
+      }
+    });
+  }
+
+  async function renderConversations(convs) {
+    const container = document.getElementById('convList');
+    if (!convs.length) {
+      container.innerHTML = `
+        <div class="chat-empty">
+          <div class="empty-icon">💬</div>
+          <h4 style="font-weight:700;margin-bottom:6px;">No conversations yet</h4>
+          <p style="font-size:0.875rem;">Find a freelancer and start chatting</p>
+          <a href="/browse/index.html" class="btn btn-primary btn-sm mt-3">Browse Services</a>
+        </div>`;
+      return;
+    }
+
+    // Fetch other user profiles
+    for (const conv of convs) {
+      const otherId = conv.participants?.find(id => id !== currentUser.uid);
+      if (otherId && !userProfiles[otherId]) {
+        const snap = await getDoc(doc(db, 'users', otherId));
+        if (snap.exists()) userProfiles[otherId] = snap.data();
+      }
+    }
+
+    const searchQuery = document.getElementById('searchConv')?.value?.toLowerCase() || '';
+    const filtered = searchQuery
+      ? convs.filter(c => {
+          const otherId = c.participants?.find(id => id !== currentUser.uid);
+          const other = userProfiles[otherId];
+          return other?.fullName?.toLowerCase().includes(searchQuery);
+        })
+      : convs;
+
+    container.innerHTML = filtered.map(conv => {
+      const otherId = conv.participants?.find(id => id !== currentUser.uid);
+      const other = userProfiles[otherId];
+      const unread = conv.unread?.[currentUser.uid] || 0;
+      const isActive = conv.id === currentConvId;
+
+      return `
+        <div class="chat-item ${isActive ? 'active' : ''}" onclick="openConversationById('${conv.id}')">
+          <div class="avatar" style="background:linear-gradient(135deg,#2563EB,#7C3AED);">
+            ${other?.fullName?.[0] || '?'}
+          </div>
+          <div class="chat-item-info">
+            <div class="chat-item-name">${other?.fullName || 'User'}</div>
+            <div class="chat-item-preview">${conv.lastMessage || 'Start a conversation'}</div>
+          </div>
+          <div class="chat-item-meta">
+            <span class="chat-item-time">${conv.lastMessageAt ? timeAgo(conv.lastMessageAt) : ''}</span>
+            ${unread > 0 ? `<span class="chat-unread">${unread}</span>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.openConversationById = function(convId) {
+    const conv = conversations.find(c => c.id === convId);
+    if (conv) openConversation(conv);
+  };
+
+  async function openConversation(conv) {
+    currentConvId = conv.id;
+    const otherId = conv.participants?.find(id => id !== currentUser.uid);
+    if (otherId && !userProfiles[otherId]) {
+      const snap = await getDoc(doc(db, 'users', otherId));
+      if (snap.exists()) userProfiles[otherId] = snap.data();
+    }
+    const other = userProfiles[otherId];
+
+    // Render chat window
+    document.getElementById('chatWindowArea').innerHTML = `
+      <div class="chat-window" style="flex:1;display:flex;flex-direction:column;">
+        <!-- Header -->
+        <div class="chat-header">
+          <button onclick="goBack()" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:1.25rem;display:none;" id="backBtn">←</button>
+          <div class="avatar" style="background:linear-gradient(135deg,#2563EB,#7C3AED);">${other?.fullName?.[0] || '?'}</div>
+          <div>
+            <div style="font-weight:700;">${other?.fullName || 'User'}</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">${other?.accountType === 'seller' ? '💼 Seller' : '🛍️ Buyer'}${other?.verified ? ' · ✅ Verified' : ''}</div>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:8px;">
+            <button class="btn btn-ghost btn-sm" onclick="window.location.href='/browse/index.html'">Browse Services</button>
+          </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="chat-messages" id="messagesContainer">
+          <div class="loader-page"><div class="loader"></div></div>
+        </div>
+
+        <!-- Link Security Notice -->
+        <div style="padding:6px 20px;background:rgba(245,158,11,0.08);border-top:1px solid rgba(245,158,11,0.15);font-size:0.75rem;color:var(--warning);display:flex;gap:6px;align-items:center;">
+          🔒 External links require admin approval before becoming visible. Keep deals on-platform.
+        </div>
+
+        <!-- Input -->
+        <div class="chat-input-area">
+          <div class="chat-input-row">
+            <button class="emoji-btn" onclick="toggleEmojiPicker()" title="Emoji">😊</button>
+            <button class="emoji-btn" onclick="document.getElementById('fileInput').click()" title="Attach file">📎</button>
+            <input type="file" id="fileInput" style="display:none;" accept="image/*,.pdf,.zip,.docx,.pptx,.mp4">
+            <input type="text" id="msgInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)" autocomplete="off">
+            <button class="btn btn-primary btn-sm" onclick="sendMsg()" style="border-radius:var(--radius-full);padding:8px 16px;">Send</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Listen for messages
+    if (unsubMessages) unsubMessages();
+    unsubMessages = listenToMessages(conv.id, (messages) => {
+      renderMessages(messages);
+      markAsRead(conv.id, currentUser.uid);
+    });
+
+    // File input
+    document.getElementById('fileInput')?.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      showToast('Uploading file...', 'info');
+      await uploadChatFile(file, currentConvId, currentUser.uid);
+      e.target.value = '';
+    });
+
+    // Update conversation list
+    renderConversations(conversations);
+
+    if (window.innerWidth <= 768) {
+      document.getElementById('chatList').classList.add('hidden');
+      document.getElementById('backBtn').style.display = 'block';
+    }
+  }
+
+  window.goBack = function() {
+    document.getElementById('chatList').classList.remove('hidden');
+    document.getElementById('chatWindowArea').innerHTML = `
+      <div class="chat-window-empty" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <div class="icon">💬</div>
+        <h3 style="font-size:1.125rem;font-weight:700;margin-bottom:8px;">Your Messages</h3>
+        <p style="font-size:0.9rem;max-width:280px;">Select a conversation to continue chatting.</p>
+      </div>`;
+    currentConvId = null;
+    if (unsubMessages) { unsubMessages(); unsubMessages = null; }
+  };
+
+  function renderMessages(messages) {
+    const container = document.getElementById('messagesContainer');
+    if (!container) return;
+
+    if (!messages.length) {
+      container.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:32px;font-size:0.9rem;">No messages yet. Say hello! 👋</div>`;
+      return;
+    }
+
+    let html = '';
+    let lastDate = null;
+
+    messages.forEach(msg => {
+      const msgDate = msg.createdAt?.toDate ? msg.createdAt.toDate().toDateString() : null;
+      if (msgDate && msgDate !== lastDate) {
+        html += `<div style="text-align:center;font-size:0.75rem;color:var(--text-muted);padding:8px 0;">${msgDate === new Date().toDateString() ? 'Today' : msgDate}</div>`;
+        lastDate = msgDate;
+      }
+      html += renderMessage(msg, currentUser.uid);
+    });
+
+    container.innerHTML = html;
+    container.scrollTop = container.scrollHeight;
+  }
+
+  window.sendMsg = async function() {
+    const input = document.getElementById('msgInput');
+    const text = input?.value?.trim();
+    if (!text || !currentConvId) return;
+    input.value = '';
+    await sendMessage(currentConvId, currentUser.uid, { text });
+  };
+
+  window.handleKeyPress = function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+  };
+
+  window.toggleEmojiPicker = function() {
+    const emojis = ['😊','👍','🙏','💯','🎉','✅','❤️','🔥','😂','👋'];
+    const input = document.getElementById('msgInput');
+    const picker = document.getElementById('emojiPicker');
+    if (picker) { picker.remove(); return; }
+    const el = document.createElement('div');
+    el.id = 'emojiPicker';
+    el.style.cssText = 'position:absolute;bottom:70px;left:20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:8px;display:flex;gap:4px;flex-wrap:wrap;width:200px;box-shadow:var(--shadow-lg);z-index:100;';
+    el.innerHTML = emojis.map(e => `<button onclick="addEmoji('${e}')" style="font-size:1.3rem;background:none;border:none;cursor:pointer;padding:4px;border-radius:4px;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='none'">${e}</button>`).join('');
+    document.querySelector('.chat-input-area').style.position = 'relative';
+    document.querySelector('.chat-input-area').appendChild(el);
+    setTimeout(() => document.addEventListener('click', function dismiss(e) {
+      if (!el.contains(e.target)) { el.remove(); document.removeEventListener('click', dismiss); }
+    }), 50);
+  };
+
+  window.addEmoji = function(emoji) {
+    const input = document.getElementById('msgInput');
+    if (input) { input.value += emoji; input.focus(); }
+    document.getElementById('emojiPicker')?.remove();
+  };
+
+  // Search conversations
+  document.getElementById('searchConv')?.addEventListener('input', () => renderConversations(conversations));
+
+  document.getElementById('logoutBtn')?.addEventListener('click', () => logout());
+</script>
+</body>
+</html>

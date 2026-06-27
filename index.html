@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hustlr — The Student Freelance Marketplace for Africa</title>
+  <meta name="description" content="Find trusted student freelancers in minutes. Affordable digital services from talented students and young professionals across Africa.">
+  <meta property="og:title" content="Hustlr — Student Freelance Marketplace">
+  <meta property="og:description" content="Africa's #1 student freelance marketplace. Secure escrow payments, verified freelancers, affordable pricing.">
+  <meta name="theme-color" content="#2563EB">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563EB'/><text x='16' y='23' text-anchor='middle' font-size='20' font-weight='900' fill='white' font-family='Arial'>H</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <div class="navbar-inner">
+    <a href="/" class="nav-logo">
+      <div class="logo-icon">H</div>
+      Hustlr
+    </a>
+
+    <div class="nav-links">
+      <a href="/browse/index.html" class="nav-link">Browse Services</a>
+      <a href="#how-it-works" class="nav-link">How It Works</a>
+      <a href="#services" class="nav-link">Categories</a>
+      <a href="#why-hustlr" class="nav-link">Why Hustlr</a>
+    </div>
+
+    <div class="nav-actions">
+      <button class="theme-toggle" title="Toggle dark mode">🌙</button>
+      <a href="/auth/login.html" class="btn btn-ghost btn-sm">Log in</a>
+      <a href="/auth/register.html" class="btn btn-primary btn-sm">Get Started</a>
+    </div>
+
+    <div class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="/browse/index.html" class="nav-link">Browse Services</a>
+  <a href="#how-it-works" class="nav-link">How It Works</a>
+  <a href="#services" class="nav-link">Categories</a>
+  <a href="#why-hustlr" class="nav-link">Why Hustlr</a>
+  <div style="border-top:1px solid var(--border);margin:8px 0;padding-top:8px;display:flex;gap:8px;">
+    <a href="/auth/login.html" class="btn btn-ghost btn-sm w-full" style="flex:1;">Log in</a>
+    <a href="/auth/register.html" class="btn btn-primary btn-sm w-full" style="flex:1;">Sign Up</a>
+  </div>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="hero" style="padding-top: 140px; padding-bottom: 100px;">
+  <div class="hero-bg">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+  <div class="container">
+    <div class="animate-fade-in-up">
+      <div class="hero-badge">
+        🌍 Africa's Student Freelance Marketplace
+      </div>
+    </div>
+    <div class="animate-fade-in-up delay-100">
+      <h1>Find Trusted Student<br>Freelancers in Minutes</h1>
+    </div>
+    <div class="animate-fade-in-up delay-200">
+      <p>Affordable digital services from talented students and young professionals. Escrow-protected payments. Verified freelancers.</p>
+    </div>
+    <div class="hero-actions animate-fade-in-up delay-300">
+      <a href="/browse/index.html" class="btn btn-primary btn-xl">
+        🔍 Hire Talent
+      </a>
+      <a href="/auth/register.html?type=seller" class="btn btn-outline btn-xl">
+        💼 Become a Seller
+      </a>
+    </div>
+
+    <!-- Trust badges -->
+    <div class="animate-fade-in-up delay-400" style="margin-top:40px;display:flex;gap:24px;justify-content:center;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:8px;font-size:0.875rem;color:var(--text-muted);">
+        🔒 <span>Escrow Protected</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:0.875rem;color:var(--text-muted);">
+        ✅ <span>Verified Freelancers</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:0.875rem;color:var(--text-muted);">
+        💬 <span>Free Messaging</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:0.875rem;color:var(--text-muted);">
+        ⚡ <span>Fast Delivery</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STATS ===== -->
+<section class="section-sm" style="background:var(--bg-secondary);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="grid grid-4 gap-6" style="text-align:center;">
+      <div class="reveal">
+        <div style="font-size:2rem;font-weight:900;color:var(--primary);" id="stat-users">2,400+</div>
+        <div style="font-size:0.875rem;color:var(--text-muted);margin-top:4px;">Active Users</div>
+      </div>
+      <div class="reveal delay-100">
+        <div style="font-size:2rem;font-weight:900;color:var(--secondary);" id="stat-gigs">800+</div>
+        <div style="font-size:0.875rem;color:var(--text-muted);margin-top:4px;">Services Listed</div>
+      </div>
+      <div class="reveal delay-200">
+        <div style="font-size:2rem;font-weight:900;color:var(--accent);" id="stat-orders">1,200+</div>
+        <div style="font-size:0.875rem;color:var(--text-muted);margin-top:4px;">Orders Completed</div>
+      </div>
+      <div class="reveal delay-300">
+        <div style="font-size:2rem;font-weight:900;color:var(--success);">4.8★</div>
+        <div style="font-size:0.875rem;color:var(--text-muted);margin-top:4px;">Average Rating</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SERVICE CATEGORIES ===== -->
+<section class="section" id="services">
+  <div class="container">
+    <div class="section-header">
+      <p class="section-eyebrow">SERVICES</p>
+      <h2>What Can We Help You With?</h2>
+      <p>Explore top service categories from Nigeria's most talented student freelancers</p>
+    </div>
+
+    <div class="grid grid-4 gap-4 stagger-children">
+      <div class="card card-clickable reveal" onclick="window.location.href='/browse/index.html?category=web-dev'">
+        <div style="font-size:2.5rem;margin-bottom:12px;">🌐</div>
+        <h3 style="font-size:1rem;margin-bottom:6px;">Website Development</h3>
+        <p style="font-size:0.875rem;">Landing pages, portfolios, full web apps</p>
+        <div style="margin-top:12px;font-size:0.8125rem;color:var(--primary);font-weight:600;">From ₦2,500</div>
+      </div>
+
+      <div class="card card-clickable reveal delay-100" onclick="window.location.href='/browse/index.html?category=graphic-design'">
+        <div style="font-size:2.5rem;margin-bottom:12px;">🎨</div>
+        <h3 style="font-size:1rem;margin-bottom:6px;">Graphic Design</h3>
+        <p style="font-size:0.875rem;">Logos, flyers, social media, brand identity</p>
+        <div style="margin-top:12px;font-size:0.8125rem;color:var(--primary);font-weight:600;">From ₦1,500</div>
+      </div>
+
+      <div class="card card-clickable reveal delay-200" onclick="window.location.href='/browse/index.html?category=ppt-design'">
+        <div style="font-size:2.5rem;margin-bottom:12px;">📊</div>
+        <h3 style="font-size:1rem;margin-bottom:6px;">PowerPoint Design</h3>
+        <p style="font-size:0.875rem;">Pitch decks, presentations, research slides</p>
+        <div style="margin-top:12px;font-size:0.8125rem;color:var(--primary);font-weight:600;">From ₦1,000</div>
+      </div>
+
+      <div class="card card-clickable reveal delay-300" onclick="window.location.href='/browse/index.html?category=cv-writing'">
+        <div style="font-size:2.5rem;margin-bottom:12px;">📄</div>
+        <h3 style="font-size:1rem;margin-bottom:6px;">CV Writing</h3>
+        <p style="font-size:0.875rem;">Professional CVs, cover letters, LinkedIn</p>
+        <div style="margin-top:12px;font-size:0.8125rem;color:var(--success);font-weight:600;">Starter FREE</div>
+      </div>
+
+      <div class="card card-clickable reveal delay-100" onclick="window.location.href='/browse/index.html?category=programming'">
+        <div style="font-size:2.5rem;margin-bottom:12px;">💻</div>
+        <h3 style="font-size:1rem;margin-bottom:6px;">Programming Help</h3>
+        <p style="font-size:0.875rem;">Assignments, debugging, apps, algorithms</p>
+        <div style="margin-top:12px;font-size:0.8125rem;color:var(--primary);font-weight:600;">From ₦2,000</div>
+      </div>
+
+      <div class="card card-clickable reveal delay-200" onclick="window.location.href='/browse/index.html?category=content'">
+        <div style="font-size:2.5rem;margin-bottom:12px;">✍️</div>
+        <h3 style="font-size:1rem;margin-bottom:6px;">Content Writing</h3>
+        <p style="font-size:0.875rem;">Blog posts, essays, research, articles</p>
+        <div style="margin-top:12px;font-size:0.8125rem;color:var(--primary);font-weight:600;">From ₦1,000</div>
+      </div>
+
+      <div class="card card-clickable reveal delay-300" onclick="window.location.href='/browse/index.html?category=video'">
+        <div style="font-size:2.5rem;margin-bottom:12px;">🎬</div>
+        <h3 style="font-size:1rem;margin-bottom:6px;">Video Editing</h3>
+        <p style="font-size:0.875rem;">YouTube, TikTok, reels, motion graphics</p>
+        <div style="margin-top:12px;font-size:0.8125rem;color:var(--primary);font-weight:600;">From ₦3,000</div>
+      </div>
+
+      <div class="card card-clickable reveal delay-400" onclick="window.location.href='/browse/index.html'">
+        <div style="font-size:2.5rem;margin-bottom:12px;">🚀</div>
+        <h3 style="font-size:1rem;margin-bottom:6px;">More Services</h3>
+        <p style="font-size:0.875rem;">Data analysis, tutoring, social media management & more</p>
+        <div style="margin-top:12px;font-size:0.8125rem;color:var(--secondary);font-weight:600;">Explore All →</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WHY HUSTLR ===== -->
+<section class="section" id="why-hustlr" style="background:var(--bg-secondary);">
+  <div class="container">
+    <div class="section-header">
+      <p class="section-eyebrow">WHY CHOOSE HUSTLR</p>
+      <h2>Built for Students, Trusted by All</h2>
+      <p>We've designed every feature to protect buyers and empower sellers in Africa's student economy</p>
+    </div>
+
+    <div class="grid grid-3 gap-6">
+      <div class="feature-card reveal">
+        <div class="feature-icon blue">🏦</div>
+        <h3>Escrow-Protected Payments</h3>
+        <p>Funds are held securely for 10 days. Pay only when you're satisfied with the delivered work. Both parties are protected.</p>
+      </div>
+      <div class="feature-card reveal delay-100">
+        <div class="feature-icon purple">✅</div>
+        <h3>Verified Freelancers</h3>
+        <p>Every seller goes through manual verification by our admin team. Only legitimate student freelancers are approved.</p>
+      </div>
+      <div class="feature-card reveal delay-200">
+        <div class="feature-icon cyan">💰</div>
+        <h3>Student-Friendly Pricing</h3>
+        <p>Services start from as low as ₦1,000. Designed specifically for Nigeria's student economy with transparent pricing.</p>
+      </div>
+      <div class="feature-card reveal delay-100">
+        <div class="feature-icon green">🔒</div>
+        <h3>Secure Messaging</h3>
+        <p>All external links are reviewed by admins before becoming visible. Real-time chat with file sharing built in.</p>
+      </div>
+      <div class="feature-card reveal delay-200">
+        <div class="feature-icon orange">⚡</div>
+        <h3>Fast Delivery</h3>
+        <p>Most services delivered within 1–7 days. Track progress in real-time with our order management system.</p>
+      </div>
+      <div class="feature-card reveal delay-300">
+        <div class="feature-icon blue">🛡️</div>
+        <h3>Admin Moderation</h3>
+        <p>Dedicated admin team resolves disputes fairly, monitors transactions, and maintains platform quality 24/7.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section class="section" id="how-it-works">
+  <div class="container">
+    <div class="section-header">
+      <p class="section-eyebrow">HOW IT WORKS</p>
+      <h2>Get Started in 3 Simple Steps</h2>
+    </div>
+
+    <div class="grid grid-2 gap-8">
+      <!-- Buyer Flow -->
+      <div>
+        <div style="text-align:center;margin-bottom:28px;">
+          <span class="badge badge-primary" style="font-size:0.875rem;padding:6px 16px;">For Buyers</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          <div class="card card-sm flex gap-4 items-start reveal">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;">1</div>
+            <div>
+              <div style="font-weight:700;margin-bottom:4px;">Browse & Choose</div>
+              <p style="font-size:0.875rem;">Search for services, view portfolios, compare packages and prices from verified student freelancers.</p>
+            </div>
+          </div>
+          <div class="card card-sm flex gap-4 items-start reveal delay-100">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;">2</div>
+            <div>
+              <div style="font-weight:700;margin-bottom:4px;">Pay Securely</div>
+              <p style="font-size:0.875rem;">Pay through our escrow system. Your money is held safely until you approve the delivered work.</p>
+            </div>
+          </div>
+          <div class="card card-sm flex gap-4 items-start reveal delay-200">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;">3</div>
+            <div>
+              <div style="font-weight:700;margin-bottom:4px;">Approve & Review</div>
+              <p style="font-size:0.875rem;">Review the work, request revisions if needed, then approve to release payment to the seller.</p>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:24px;">
+          <a href="/browse/index.html" class="btn btn-primary">Find a Freelancer →</a>
+        </div>
+      </div>
+
+      <!-- Seller Flow -->
+      <div>
+        <div style="text-align:center;margin-bottom:28px;">
+          <span class="badge badge-secondary" style="font-size:0.875rem;padding:6px 16px;">For Sellers</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          <div class="card card-sm flex gap-4 items-start reveal">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--secondary);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;">1</div>
+            <div>
+              <div style="font-weight:700;margin-bottom:4px;">Create Your Gig</div>
+              <p style="font-size:0.875rem;">List your service with a title, description, portfolio samples, and pricing packages. It's free!</p>
+            </div>
+          </div>
+          <div class="card card-sm flex gap-4 items-start reveal delay-100">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--secondary);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;">2</div>
+            <div>
+              <div style="font-weight:700;margin-bottom:4px;">Receive & Deliver</div>
+              <p style="font-size:0.875rem;">Accept orders, chat with clients, deliver quality work on time. Track all orders in one dashboard.</p>
+            </div>
+          </div>
+          <div class="card card-sm flex gap-4 items-start reveal delay-200">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--secondary);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;">3</div>
+            <div>
+              <div style="font-weight:700;margin-bottom:4px;">Get Paid</div>
+              <p style="font-size:0.875rem;">Once approved, earn 90% of the order value. Withdraw directly to your Nigerian bank account.</p>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:24px;">
+          <a href="/auth/register.html?type=seller" class="btn btn-secondary">Start Selling →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ESCROW INFO ===== -->
+<section class="section" style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white;">
+  <div class="container" style="text-align:center;">
+    <div class="reveal">
+      <div style="font-size:3rem;margin-bottom:16px;">🔐</div>
+      <h2 style="color:white;font-size:2rem;margin-bottom:16px;">Your Money is Always Protected</h2>
+      <p style="color:rgba(255,255,255,0.85);font-size:1.0625rem;max-width:560px;margin:0 auto 32px;">Our escrow system holds funds for 10 days after order placement. Sellers only get paid after you approve the work. No risk, guaranteed protection.</p>
+    </div>
+    <div class="grid grid-3 gap-6 reveal delay-200" style="max-width:720px;margin:0 auto 32px;">
+      <div class="glassmorphism" style="padding:20px;border-radius:16px;text-align:center;">
+        <div style="font-size:1.5rem;margin-bottom:8px;">1️⃣</div>
+        <div style="font-weight:700;margin-bottom:4px;color:white;">Buyer Pays</div>
+        <div style="font-size:0.8125rem;color:rgba(255,255,255,0.75);">Funds enter escrow</div>
+      </div>
+      <div class="glassmorphism" style="padding:20px;border-radius:16px;text-align:center;">
+        <div style="font-size:1.5rem;margin-bottom:8px;">2️⃣</div>
+        <div style="font-weight:700;margin-bottom:4px;color:white;">Work Delivered</div>
+        <div style="font-size:0.8125rem;color:rgba(255,255,255,0.75);">Seller submits work</div>
+      </div>
+      <div class="glassmorphism" style="padding:20px;border-radius:16px;text-align:center;">
+        <div style="font-size:1.5rem;margin-bottom:8px;">3️⃣</div>
+        <div style="font-weight:700;margin-bottom:4px;color:white;">Funds Released</div>
+        <div style="font-size:0.8125rem;color:rgba(255,255,255,0.75);">After buyer approves</div>
+      </div>
+    </div>
+    <a href="/auth/register.html" class="btn btn-outline-white btn-lg">Get Started Free</a>
+  </div>
+</section>
+
+<!-- ===== PRICING ===== -->
+<section class="section" id="pricing">
+  <div class="container">
+    <div class="section-header">
+      <p class="section-eyebrow">PRICING</p>
+      <h2>Affordable Packages for Everyone</h2>
+      <p>Simple, transparent pricing. No hidden fees. Platform takes only 10% commission.</p>
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table class="table" style="border:1px solid var(--border);border-radius:var(--radius-md);">
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th style="color:var(--text-muted)">Starter</th>
+            <th style="color:var(--primary)">Basic</th>
+            <th style="color:var(--secondary)">Standard</th>
+            <th style="color:var(--accent)">Premium</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>🌐 Website Dev</strong></td>
+            <td>₦2,500</td>
+            <td>₦5,000</td>
+            <td>₦10,000</td>
+            <td>₦20,000</td>
+          </tr>
+          <tr>
+            <td><strong>🎨 Graphic Design</strong></td>
+            <td>₦1,500</td>
+            <td>₦3,000</td>
+            <td>₦7,000</td>
+            <td>₦15,000</td>
+          </tr>
+          <tr>
+            <td><strong>📊 PowerPoint Design</strong></td>
+            <td>₦1,000</td>
+            <td>₦2,500</td>
+            <td>₦5,000</td>
+            <td>₦10,000</td>
+          </tr>
+          <tr>
+            <td><strong>📄 CV Writing</strong></td>
+            <td class="text-success" style="color:var(--success);font-weight:700;">FREE</td>
+            <td>₦1,500</td>
+            <td>₦3,000</td>
+            <td>₦5,000</td>
+          </tr>
+          <tr>
+            <td><strong>💻 Programming Help</strong></td>
+            <td>₦2,000</td>
+            <td>₦5,000</td>
+            <td>₦10,000</td>
+            <td>₦20,000</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="text-align:center;margin-top:20px;">
+      <p style="font-size:0.875rem;color:var(--text-muted);">💡 Sellers can create custom packages too. These are suggested starting prices.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FREE FEATURES ===== -->
+<section class="section-sm" style="background:var(--bg-secondary);">
+  <div class="container" style="text-align:center;">
+    <h2 style="font-size:1.75rem;margin-bottom:8px;">Everything You Need — <span class="gradient-text">Free</span></h2>
+    <p style="max-width:500px;margin:0 auto 32px;">No subscription. No sign-up fees. Start earning or hiring immediately.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
+      <div class="badge badge-primary" style="padding:8px 16px;font-size:0.875rem;">✅ Free Registration</div>
+      <div class="badge badge-secondary" style="padding:8px 16px;font-size:0.875rem;">✅ Free Profile Creation</div>
+      <div class="badge badge-accent" style="padding:8px 16px;font-size:0.875rem;">✅ Free Messaging</div>
+      <div class="badge badge-success" style="padding:8px 16px;font-size:0.875rem;">✅ Free Portfolio Uploads</div>
+      <div class="badge badge-warning" style="padding:8px 16px;font-size:0.875rem;">✅ Free Reviews</div>
+      <div class="badge badge-gray" style="padding:8px 16px;font-size:0.875rem;">✅ Free Service Browsing</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="section" style="text-align:center;">
+  <div class="container">
+    <div class="card card-lg" style="background:linear-gradient(135deg,rgba(37,99,235,0.05),rgba(124,58,237,0.05));border:2px solid var(--border);">
+      <h2 style="font-size:2rem;margin-bottom:12px;">Ready to <span class="gradient-text">Hustle</span>?</h2>
+      <p style="font-size:1.0625rem;max-width:480px;margin:0 auto 28px;">Join thousands of students buying and selling services on Africa's #1 student freelance platform.</p>
+      <div class="flex gap-3 justify-center flex-wrap">
+        <a href="/auth/register.html?type=buyer" class="btn btn-primary btn-lg">🛍️ Hire a Freelancer</a>
+        <a href="/auth/register.html?type=seller" class="btn btn-secondary btn-lg">💼 Start Selling</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo" style="margin-bottom:12px;">
+          <div class="logo-icon">H</div>
+          <span style="color:#e2e8f0;">Hustlr</span>
+        </div>
+        <p>Africa's leading student freelance marketplace. Secure, affordable, and trusted by thousands of students and professionals across Nigeria.</p>
+        <div style="display:flex;gap:12px;margin-top:20px;">
+          <a href="#" style="color:#94a3b8;font-size:1.3rem;" title="Twitter">𝕏</a>
+          <a href="#" style="color:#94a3b8;font-size:1.3rem;" title="Instagram">📷</a>
+          <a href="#" style="color:#94a3b8;font-size:1.3rem;" title="WhatsApp">💬</a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>For Buyers</h4>
+        <ul>
+          <li><a href="/browse/index.html">Browse Services</a></li>
+          <li><a href="/auth/register.html?type=buyer">Sign Up as Buyer</a></li>
+          <li><a href="/buyer/dashboard.html">Buyer Dashboard</a></li>
+          <li><a href="#how-it-works">How It Works</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>For Sellers</h4>
+        <ul>
+          <li><a href="/auth/register.html?type=seller">Become a Seller</a></li>
+          <li><a href="/seller/dashboard.html">Seller Dashboard</a></li>
+          <li><a href="#pricing">Pricing Guide</a></li>
+          <li><a href="#services">Service Categories</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2025 Hustlr. All rights reserved. Made with ❤️ for African students.</p>
+      <p>🔒 Escrow Protected &nbsp;|&nbsp; 🌍 Nigeria</p>
+    </div>
+  </div>
+</footer>
+
+<button class="scroll-top" id="scrollTop">↑</button>
+<div class="toast-container"></div>
+
+<script type="module">
+  import { initApp } from '/js/app.js';
+  import { onAuthChange, getUserProfile } from '/js/auth.js';
+
+  initApp();
+
+  // Handle auth state
+  onAuthChange(async (user) => {
+    if (user) {
+      const profile = await getUserProfile(user.uid);
+      const navActions = document.querySelector('.nav-actions');
+      navActions.innerHTML = `
+        <button class="theme-toggle" title="Toggle dark mode">🌙</button>
+        <a href="${profile?.accountType === 'seller' ? '/seller/dashboard.html' : '/buyer/dashboard.html'}" class="btn btn-primary btn-sm">Dashboard →</a>
+      `;
+      document.querySelector('.theme-toggle')?.addEventListener('click', () => {
+        import('/js/app.js').then(m => m.toggleTheme());
+      });
+    }
+  });
+
+  // Mobile nav
+  document.getElementById('hamburger')?.addEventListener('click', () => {
+    document.getElementById('hamburger').classList.toggle('open');
+    document.getElementById('mobileNav').classList.toggle('open');
+  });
+</script>
+</body>
+</html>

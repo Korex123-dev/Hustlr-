@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browse Services — Hustlr</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563EB'/><text x='16' y='23' text-anchor='middle' font-size='20' font-weight='900' fill='white' font-family='Arial'>H</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/animations.css">
+  <style>
+    body { padding-top: var(--header-height); }
+    .browse-hero {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      padding: 48px 0;
+      color: white;
+    }
+    .filter-sidebar {
+      width: 240px;
+      flex-shrink: 0;
+    }
+    .gigs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    @media (max-width: 768px) {
+      .filter-sidebar { display: none; }
+      .gigs-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="/" class="nav-logo"><div class="logo-icon">H</div> Hustlr</a>
+    <div class="nav-links">
+      <a href="/browse/index.html" class="nav-link active">Browse</a>
+    </div>
+    <div class="nav-actions">
+      <button class="theme-toggle">🌙</button>
+      <div id="authNav">
+        <a href="/auth/login.html" class="btn btn-ghost btn-sm">Log in</a>
+        <a href="/auth/register.html" class="btn btn-primary btn-sm">Get Started</a>
+      </div>
+    </div>
+    <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="/browse/index.html" class="nav-link">Browse Services</a>
+  <a href="/auth/login.html" class="nav-link">Log in</a>
+  <a href="/auth/register.html" class="nav-link">Sign Up</a>
+</div>
+
+<!-- HERO SEARCH -->
+<div class="browse-hero">
+  <div class="container" style="text-align:center;">
+    <h1 style="color:white;font-size:2rem;margin-bottom:8px;">Find the Perfect Freelancer</h1>
+    <p style="color:rgba(255,255,255,0.85);margin-bottom:24px;">Browse services from verified student freelancers across Nigeria</p>
+    <div style="max-width:600px;margin:0 auto;position:relative;">
+      <span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:1.1rem;">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search for any service..." style="width:100%;padding:14px 16px 14px 46px;border-radius:var(--radius-full);border:none;font-size:1rem;background:white;color:var(--text-primary);">
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORY PILLS -->
+<div style="background:var(--bg-secondary);border-bottom:1px solid var(--border);padding:14px 0;">
+  <div class="container">
+    <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;" id="categoryPills">
+      <button class="tag active" data-cat="">All</button>
+      <button class="tag" data-cat="web-dev">🌐 Web Dev</button>
+      <button class="tag" data-cat="graphic-design">🎨 Graphic Design</button>
+      <button class="tag" data-cat="ppt-design">📊 PowerPoint</button>
+      <button class="tag" data-cat="cv-writing">📄 CV Writing</button>
+      <button class="tag" data-cat="programming">💻 Programming</button>
+      <button class="tag" data-cat="content">✍️ Content</button>
+      <button class="tag" data-cat="video">🎬 Video</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="container" style="padding-top:28px;padding-bottom:48px;">
+  <div style="display:flex;gap:28px;">
+
+    <!-- FILTER SIDEBAR -->
+    <div class="filter-sidebar">
+      <div class="card card-sm mb-3">
+        <h4 style="font-size:0.9rem;margin-bottom:14px;">Sort By</h4>
+        <select class="form-control" id="sortBy">
+          <option value="createdAt">Newest</option>
+          <option value="rating">Top Rated</option>
+          <option value="orderCount">Most Popular</option>
+        </select>
+      </div>
+
+      <div class="card card-sm mb-3">
+        <h4 style="font-size:0.9rem;margin-bottom:14px;">Price Range</h4>
+        <div class="form-group">
+          <label class="form-label" style="font-size:0.75rem;">Min (₦)</label>
+          <input type="number" id="priceMin" class="form-control" placeholder="0" min="0">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label" style="font-size:0.75rem;">Max (₦)</label>
+          <input type="number" id="priceMax" class="form-control" placeholder="Any" min="0">
+        </div>
+      </div>
+
+      <div class="card card-sm">
+        <h4 style="font-size:0.9rem;margin-bottom:14px;">Filters</h4>
+        <label style="display:flex;align-items:center;gap:8px;font-size:0.875rem;cursor:pointer;margin-bottom:8px;">
+          <input type="checkbox" id="verifiedOnly"> Verified sellers only
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:0.875rem;cursor:pointer;">
+          <input type="checkbox" id="topRated"> Top rated (4+ stars)
+        </label>
+        <button class="btn btn-primary btn-sm btn-full mt-3" id="applyFilters">Apply Filters</button>
+      </div>
+    </div>
+
+    <!-- GIGS GRID -->
+    <div style="flex:1;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div style="font-size:0.9375rem;color:var(--text-muted);">
+          Showing <strong id="resultCount" style="color:var(--text-primary);">0</strong> services
+        </div>
+        <select class="form-control" style="width:auto;padding:8px 12px;" id="sortByMobile">
+          <option value="createdAt">Sort: Newest</option>
+          <option value="rating">Sort: Top Rated</option>
+          <option value="orderCount">Sort: Most Popular</option>
+        </select>
+      </div>
+
+      <div class="gigs-grid" id="gigsGrid">
+        <!-- Skeleton Loading -->
+        ${Array(8).fill('').map(() => `
+          <div class="gig-card">
+            <div class="skeleton skeleton-card"></div>
+            <div style="padding:14px;">
+              <div class="skeleton skeleton-text" style="width:40%;height:12px;margin-bottom:6px;"></div>
+              <div class="skeleton skeleton-text" style="margin-bottom:4px;"></div>
+              <div class="skeleton skeleton-text" style="width:60%;"></div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- Load More -->
+      <div style="text-align:center;margin-top:32px;">
+        <button class="btn btn-outline" id="loadMoreBtn" style="display:none;">Load More</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <p>© 2025 Hustlr. All rights reserved.</p>
+      <a href="/" style="color:#94a3b8;">← Back to Home</a>
+    </div>
+  </div>
+</footer>
+
+<div class="toast-container"></div>
+
+<script type="module">
+  import { initTheme, toggleTheme, formatCurrency, renderStars, debounce, showToast, initDropdowns } from '/js/app.js';
+  import { onAuthChange, getUserProfile } from '/js/auth.js';
+  import { getGigs, renderGigCard } from '/js/services.js';
+  import {
+    collection, query, where, getDocs, getDoc, doc, orderBy, limit
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { db } from '/js/firebase-config.js';
+
+  initTheme();
+  document.querySelector('.theme-toggle')?.addEventListener('click', toggleTheme);
+
+  // Mobile nav
+  document.getElementById('hamburger')?.addEventListener('click', () => {
+    document.getElementById('hamburger').classList.toggle('open');
+    document.getElementById('mobileNav').classList.toggle('open');
+  });
+
+  // Auth state
+  onAuthChange(async (user) => {
+    if (user) {
+      const profile = await getUserProfile(user.uid);
+      const dashUrl = profile?.accountType === 'seller' ? '/seller/dashboard.html' : '/buyer/dashboard.html';
+      document.getElementById('authNav').innerHTML = `
+        <a href="${dashUrl}" class="btn btn-primary btn-sm">Dashboard →</a>
+      `;
+    }
+  });
+
+  let currentCategory = '';
+  let lastDoc = null;
+  let allGigsData = [];
+
+  // Load from URL params
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('category')) {
+    currentCategory = params.get('category');
+    document.querySelectorAll('.tag').forEach(t => {
+      t.classList.toggle('active', t.dataset.cat === currentCategory);
+    });
+  }
+
+  // Category pills
+  document.querySelectorAll('.tag[data-cat]').forEach(tag => {
+    tag.addEventListener('click', () => {
+      document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+      tag.classList.add('active');
+      currentCategory = tag.dataset.cat;
+      lastDoc = null;
+      loadGigs();
+    });
+  });
+
+  // Search
+  const searchInput = document.getElementById('searchInput');
+  searchInput.addEventListener('input', debounce(() => {
+    lastDoc = null;
+    loadGigs();
+  }, 400));
+
+  // Sort
+  document.getElementById('sortBy')?.addEventListener('change', () => { lastDoc = null; loadGigs(); });
+  document.getElementById('sortByMobile')?.addEventListener('change', (e) => {
+    document.getElementById('sortBy').value = e.target.value;
+    lastDoc = null;
+    loadGigs();
+  });
+
+  // Filters
+  document.getElementById('applyFilters')?.addEventListener('click', () => { lastDoc = null; loadGigs(); });
+
+  // Load More
+  document.getElementById('loadMoreBtn')?.addEventListener('click', loadGigs);
+
+  async function loadGigs(append = false) {
+    const grid = document.getElementById('gigsGrid');
+    if (!append) {
+      grid.innerHTML = Array(8).fill('').map(() => `
+        <div class="gig-card"><div class="skeleton" style="height:180px;"></div>
+          <div style="padding:14px;">
+            <div class="skeleton skeleton-text" style="width:40%;height:12px;margin-bottom:6px;"></div>
+            <div class="skeleton skeleton-text"></div>
+          </div>
+        </div>`).join('');
+    }
+
+    const sortBy = document.getElementById('sortBy')?.value || 'createdAt';
+    const search = searchInput?.value?.trim() || '';
+    const priceMin = parseInt(document.getElementById('priceMin')?.value) || 0;
+    const priceMax = parseInt(document.getElementById('priceMax')?.value) || Infinity;
+    const verifiedOnly = document.getElementById('verifiedOnly')?.checked;
+    const topRated = document.getElementById('topRated')?.checked;
+
+    try {
+      const constraints = [where('status', '==', 'active')];
+      if (currentCategory) constraints.push(where('category', '==', currentCategory));
+      constraints.push(orderBy(sortBy === 'createdAt' ? 'createdAt' : sortBy, 'desc'), limit(12));
+      if (lastDoc && append) constraints.push(startAfter(lastDoc));
+
+      const { getFirestore, collection: col, query: q, getDocs: gd, where: w, orderBy: ob, limit: lm, startAfter: sa } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      const snap = await getDocs(query(collection(db, 'gigs'), ...constraints));
+      lastDoc = snap.docs[snap.docs.length - 1];
+
+      let gigs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      // Client-side filters
+      if (search) gigs = gigs.filter(g =>
+        g.title?.toLowerCase().includes(search.toLowerCase()) ||
+        g.keywords?.some(k => k.toLowerCase().includes(search.toLowerCase()))
+      );
+      if (priceMin) gigs = gigs.filter(g => (g.packages?.[0]?.price || 0) >= priceMin);
+      if (priceMax && priceMax !== Infinity) gigs = gigs.filter(g => (g.packages?.[0]?.price || 0) <= priceMax);
+      if (topRated) gigs = gigs.filter(g => (g.rating || 0) >= 4);
+
+      if (!append) allGigsData = gigs;
+      else allGigsData = [...allGigsData, ...gigs];
+
+      document.getElementById('resultCount').textContent = allGigsData.length;
+
+      if (!allGigsData.length) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
+          <div class="empty-icon">🔍</div>
+          <h3>No services found</h3>
+          <p>Try different keywords or categories</p>
+        </div>`;
+        document.getElementById('loadMoreBtn').style.display = 'none';
+        return;
+      }
+
+      // Fetch seller profiles
+      const sellerIds = [...new Set(gigs.map(g => g.sellerId))];
+      const sellers = {};
+      await Promise.all(sellerIds.map(async id => {
+        const snap = await getDoc(doc(db, 'users', id));
+        if (snap.exists()) sellers[id] = snap.data();
+      }));
+
+      const cards = (append ? gigs : allGigsData).map(g => renderGigCard(g, sellers[g.sellerId])).join('');
+      if (append) grid.insertAdjacentHTML('beforeend', cards);
+      else grid.innerHTML = cards;
+
+      document.getElementById('loadMoreBtn').style.display = snap.docs.length === 12 ? 'inline-flex' : 'none';
+    } catch (err) {
+      console.error(err);
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon">⚠️</div><h3>Failed to load services</h3><p>Please check your connection and try again</p></div>`;
+    }
+  }
+
+  loadGigs();
+</script>
+</body>
+</html>
