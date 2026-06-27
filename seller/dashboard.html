@@ -651,7 +651,12 @@
     if (!msg.trim()) { showToast('Please add a message for the buyer', 'warning'); return; }
     const btn = document.getElementById('submitDeliveryBtn');
     btn.disabled = true; btn.textContent = 'Submitting...';
-    const result = await submitDelivery(currentDeliveryOrderId, { message: msg, files: [] });
+
+    // Collect selected files
+    const fileInput = document.getElementById('deliverFile');
+    const selectedFiles = fileInput?.files ? Array.from(fileInput.files) : [];
+
+    const result = await submitDelivery(currentDeliveryOrderId, { message: msg, files: selectedFiles });
     if (result.success) {
       document.getElementById('deliverModal').classList.remove('open');
       document.body.style.overflow = '';

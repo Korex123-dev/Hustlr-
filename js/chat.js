@@ -241,7 +241,9 @@ export function renderMessage(msg, currentUserId) {
       </a>
     `;
   } else {
-    content = `<span>${msg.text || ''}</span>`;
+    // Escape user text to prevent XSS
+    const escaped = (msg.text || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+    content = `<span>${escaped}</span>`;
     if (msg.hasLink && msg.linkStatus === 'pending') {
       content += `<br><small style="opacity:0.7;font-size:0.7rem;">🔗 Link pending admin review</small>`;
     }

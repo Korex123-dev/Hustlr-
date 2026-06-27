@@ -327,7 +327,8 @@ export function sanitizeMessage(text) {
 }
 
 export function containsLink(text) {
-  return URL_REGEX.test(text);
+  // Create a new regex each call to avoid stateful lastIndex issues with /g flag
+  return new RegExp(URL_REGEX.source, URL_REGEX.flags.replace('g', '')).test(text);
 }
 
 // ---- Initialize All ----
